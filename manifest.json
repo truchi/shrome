@@ -1,0 +1,12 @@
+{
+	"name": "Shrome",
+	"description": "Yet another JS/CSS injector",
+	"version": "0.0.1",
+  "permissions": ["*://*/*", "webNavigation", "tabs", "storage"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistant": false
+  },
+  "options_page": "options.html",
+	"manifest_version": 2
+}

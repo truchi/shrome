@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+         #form i {
+             display: inline-block;
+             width : 12px;
+             height: 12px;
+             background-size: 12px;
+         }
+
+         form i.ok {
+             background-image: url('imgs/ok.svg');
+         }
+
+         form i.ko {
+             background-image: url('imgs/ko.svg');
+         }
+
+         .message {
+             color: red;
+         }
+        </style>
+    </head>
+    <body>
+        <form id="git">
+            <b>Github</b>
+            <input id="user" type="text" placeholder="user">/
+            <input id="repo" type="text" placeholder="repo">
+            <i class="icon"></i>
+            <span class="message"></span>
+        </form>
+        <div id="table">
+
+        </div>
+    </body>
+    <script src="models/Shrome.js"></script>
+    <script src="views/Git.js"></script>
+    <script src="controllers/Request.js"></script>
+    <script src="controllers/Options.js"></script>
+    <script src="options.js"></script>
+</html>
