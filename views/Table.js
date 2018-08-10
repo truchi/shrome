@@ -62,8 +62,10 @@ class Table {
     return `
       <li class="theme">
         <div class="name">
-          ${ depth === 0 ? `<input id="table_theme_${ theme }" type="radio" name="theme" value="${ theme }">` : '' }
-          <label for="table_theme_${ theme }">${ theme }</label>
+          <label>
+            ${ depth === 0 ? `<input type="radio" name="theme" value="${ theme }">` : '' }
+            ${ theme }
+          </label>
         </div>
         ${ match ? `Match: <ul class="matches">${ match.map(match => `<li class="match">${ match }</li>`).join('') }</ul>` : '' }
         ${ base  ? `<div class="base">Base: <span>${ base }</span></div>` : '' }
