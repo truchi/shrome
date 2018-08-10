@@ -2,7 +2,7 @@ class Config {
   static save(cfg) {
     const keys   = Object.keys(Config.default)
     const config = Object.keys(cfg)
-      .map(key => keys.includes(key))
+      .filter(key => keys.includes(key))
       .reduce((carry, key) => { return { ...carry, [key]: cfg[key] } }, {})
 
     return new Promise((resolve, reject) =>
