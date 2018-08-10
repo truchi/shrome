@@ -19,12 +19,15 @@ class Git {
     this.$repo.addEventListener('input' , this.onForm)
   }
 
-  onForm() {
+  onForm(e) {
     const user = this.$user.value
     const repo = this.$repo.value
 
     const event = new CustomEvent('git:form', { detail: { user, repo } })
     this.$dispatcher.dispatchEvent(event)
+
+    e.preventDefault()
+    e.stopPropagation()
 
     return this
   }
