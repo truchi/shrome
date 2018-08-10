@@ -29,7 +29,10 @@ class Git {
     return this
   }
 
-  render({ ok, message = '' }) {
+  render({ user, repo, ok = true, message = '' }) {
+    user && (this.$user.value = user)
+    repo && (this.$repo.value = repo)
+
     this.$icon.classList.remove(ok ? 'ko' : 'ok')
     this.$icon.classList.add   (ok ? 'ok' : 'ko')
 

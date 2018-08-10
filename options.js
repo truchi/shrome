@@ -3,6 +3,7 @@ const $user    = document.getElementById('user')
 const $repo    = document.getElementById('repo')
 const $icon    = $form.getElementsByClassName('icon')[0]
 const $message = $form.getElementsByClassName('message')[0]
+const $table   = document.getElementById('table')
 
 const git = new Git({
   $form,
@@ -12,6 +13,11 @@ const git = new Git({
   $message
 })
 
+const table = new Table({
+  $table
+})
+
 const options = new Options({
-  git
+  git,
+  table
 })

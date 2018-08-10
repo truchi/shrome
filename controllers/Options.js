@@ -3,21 +3,17 @@
 // requires options/controllers/Request.js
 
 class Options {
-  constructor({ shrome, git }) {
-    this.git = git
+  constructor({ git, table }) {
+    this.git   = git
+    this.table = table
 
     this.success = this.success.bind(this)
     this.fail    = this.fail   .bind(this)
 
     this.attach()
 
-    Config.get()
-      .then (console.log)
-      .catch(console.warn)
-
-    Shrome.get()
-      .then (console.log)
-      .catch(console.warn)
+    Promise.all([ Config.get(), Shrome.get() ])
+      .then(([ { user, repo }, shrome ]) => this.render(user, repo, shrome.data))
   }
 
   attach() {
@@ -32,6 +28,11 @@ class Options {
     })
   }
 
+  render(user, repo, data) {
+    this.git  .render({ user, repo })
+    this.table.render(data)
+  }
+
   success({ user, repo, data }) {
     data = JSON.parse(data)
 
@@ -39,7 +40,8 @@ class Options {
     shrome.save()
     Config.save({ user, repo })
 
-    this.git.render({ ok: true })
+    this.git  .render({ ok: true })
+    this.table.render(data)
   }
 
   fail(message) {
