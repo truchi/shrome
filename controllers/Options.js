@@ -1,3 +1,4 @@
+// requires options/models/Config.js
 // requires options/models/Shrome.js
 // requires options/controllers/Request.js
 
@@ -9,6 +10,11 @@ class Options {
     this.fail    = this.fail   .bind(this)
 
     this.attach()
+
+    Config.get()
+      .then (console.log)
+      .catch(console.warn)
+
     Shrome.get()
       .then (console.log)
       .catch(console.warn)
@@ -27,8 +33,11 @@ class Options {
   }
 
   success({ user, repo, data }) {
-    const shrome = new Shrome(user, repo, JSON.parse(data))
+    data = JSON.parse(data)
+
+    const shrome = new Shrome({ data })
     shrome.save()
+    Config.save({ user, repo })
 
     this.git.render({ ok: true })
   }
