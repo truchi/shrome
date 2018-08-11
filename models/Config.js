@@ -29,7 +29,8 @@ Config.default = {
   user : 'truchi',
   repo : 'shrome-themes',
   local: false,
-  sha  : ''
+  sha  : '',
+  theme: null
 }
 
 window.Config = Config

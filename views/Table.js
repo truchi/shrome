@@ -34,13 +34,16 @@ class Table {
     this.$dispatcher.dispatchEvent(event)
   }
 
-  render(data) {
+  render({ data, theme }) {
     this.detach()
 
     this.$table.innerHTML = `
       <div class="local">Local: <span>${ data.local }</span></div>
       ${ this.compileThemes(data.themes) }
     `
+
+    const $radio = this.$table.querySelector(`input[value="${ theme }"]`)
+    if ($radio) $radio.checked = true
 
     this.attach()
   }

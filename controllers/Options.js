@@ -7,33 +7,35 @@ class Options {
     this.git   = git
     this.table = table
 
-    this.success = this.success.bind(this)
-    this.fail    = this.fail   .bind(this)
+    this.shromeFileSuccess = this.shromeFileSuccess.bind(this)
+    this.shromeFileFail    = this.shromeFileFail   .bind(this)
 
     this.attach()
 
     Promise.all([ Config.get(), Shrome.get() ])
-      .then(([ { user, repo }, shrome ]) => this.render(user, repo, shrome.data))
+      .then(([ config, shrome ]) => this.renderConfig({ ...config, data: shrome.data }))
   }
 
   attach() {
     this.git.$dispatcher.addEventListener('git:form', ({ detail: { user, repo } }) => {
       if (user && repo) {
         Request.getShromeFile(user, repo)
-          .then (this.success)
-          .catch(this.fail)
+          .then (this.shromeFileSuccess)
+          .catch(this.shromeFileFail)
       } else {
         this.fail()
       }
     })
+
+    this.table.$dispatcher.addEventListener('table:theme', ({ detail: { theme } }) => Config.save({ theme }))
   }
 
-  render(user, repo, data) {
-    this.git  .render({ user, repo })
-    this.table.render(data)
+  renderConfig({ user, repo, theme, data }) {
+    this.git  .render({ user, repo  })
+    this.table.render({ data, theme })
   }
 
-  success({ user, repo, data }) {
+  shromeFileSuccess({ user, repo, data }) {
     data = JSON.parse(data)
 
     const shrome = new Shrome({ data })
@@ -44,7 +46,7 @@ class Options {
     this.table.render(data)
   }
 
-  fail(message) {
+  shromeFileFail(message) {
     this.git.render({ ok: false, message })
   }
 }
