@@ -23,7 +23,7 @@ class Options {
           .then (this.shromeFileSuccess)
           .catch(this.shromeFileFail)
       } else {
-        this.fail()
+        this.shromeFileFail()
       }
     })
 

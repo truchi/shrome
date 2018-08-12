@@ -15,8 +15,6 @@ class Shrome {
 
       return data.__base
     })
-
-    console.log('files: ' + shrome.files('https://www.youtube.com/', theme))
   }
 
   files(url, theme) {
@@ -54,7 +52,7 @@ class Shrome {
       chrome.storage.sync.get('data', ({ data }) =>
         chrome.runtime.lastError
           ? reject (chrome.runtime.lastError)
-          : resolve(new Shrome({ data: data ? JSON.parse(data) : undefined }))
+          : resolve(new Shrome({ data: data ? JSON.parse(data) : Shrome.default }))
       )
     )
   }
@@ -66,6 +64,10 @@ class Shrome {
 
     return new RegExp(pattern, flags)
   }
+}
+
+Shrome.default = {
+  themes: {}
 }
 
 window.Shrome = Shrome
