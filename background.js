@@ -19,6 +19,12 @@ chrome.webNavigation.onCompleted.addListener((navigation) => {
   console.log(navigation.tabId, navigation.url)
 
   if (!navigation.url.startsWith('chrome://')) {
+    chrome.tabs.sendMessage(navigation.tabId, {
+      files: {
+        js: ['console.log(\'here\')'],
+        css: ['* { background: purple }']
+      }
+    })
     chrome.tabs.insertCSS(navigation.tabId, {
       code: '* {color:blue}'
     })
