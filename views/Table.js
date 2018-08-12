@@ -67,7 +67,7 @@ class Table {
         <div class="name">
           <label>
             ${ depth === 0 ? `<input type="radio" name="theme" value="${ theme }">` : '' }
-            ${ theme }
+            <b>${ theme }</b>
           </label>
         </div>
         ${ match ? `Match: <ul class="matches">${ match.map(match => `<li class="match">${ match }</li>`).join('') }</ul>` : '' }

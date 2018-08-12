@@ -1,6 +1,40 @@
+// requires 'helpers.js'
+
 class Shrome {
   constructor({ data }) {
     this.data = data
+
+    this.sanitized = JSON.parse(JSON.stringify(this.data))
+    Helpers.mapTree(this.sanitized.themes, (theme, data, i, d, base) => {
+      if (theme.startsWith('__')) return
+
+      const makeArr = obj => obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
+      data.__match  = makeArr(data.__match).map(match => Shrome.getRegExp(match))
+      data.__files  = makeArr(data.__files)
+      data.__base   = (base || '') + (data.__base || '')
+
+      return data.__base
+    })
+
+    console.log('files: ' + shrome.files('https://www.youtube.com/', theme))
+  }
+
+  files(url, theme) {
+    if (!theme) return []
+
+    const data  = this.sanitized.themes[theme]
+    let   files = []
+
+    Helpers.mapTree(data, (theme, data) => {
+      if (theme.startsWith('__'))                       return true
+      if (!data.__match.length)                         return true
+      if (!data.__match.some(match => match.test(url))) return false
+
+      data.__files.forEach(file => files.push(`${ data.__base }/${ file }`))
+      return true
+    })
+
+    return files
   }
 
   save() {
@@ -23,6 +57,14 @@ class Shrome {
           : resolve(new Shrome({ data: data ? JSON.parse(data) : undefined }))
       )
     )
+  }
+
+  static getRegExp(string) {
+    const pos     = string.lastIndexOf('/')
+    const pattern = string.slice(1, pos)
+    const flags   = string.slice(pos + 1, string.length)
+
+    return new RegExp(pattern, flags)
   }
 }
 
