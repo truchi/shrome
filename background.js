@@ -1,3 +1,6 @@
+// requires 'controllers/Background.js'
+
+const background = new Background()
 chrome.windows.getAll({ populate: true }, (windows) => {
   console.log(windows)
 
@@ -14,19 +17,4 @@ chrome.windows.getAll({ populate: true }, (windows) => {
   }
 })
 
-chrome.webNavigation.onCompleted.addListener((navigation) => {
-  if (navigation.frameId !== 0) return
-  console.log(navigation.tabId, navigation.url)
-
-  if (!navigation.url.startsWith('chrome://')) {
-    chrome.tabs.sendMessage(navigation.tabId, {
-      files: {
-        js: ['console.log(\'here\')'],
-        css: ['* { background: purple }']
-      }
-    })
-    chrome.tabs.insertCSS(navigation.tabId, {
-      code: '* {color:blue}'
-    })
-  }
-})
+chrome.webNavigation.onCompleted.addListener(background.onCompleted.bind(background))
