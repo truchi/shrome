@@ -5,7 +5,7 @@ class Request {
         .catch(reject)
         .then(sha =>
           this.get(Request.shromeFileUrl(user, repo, sha))
-            .then (data => resolve({ user, repo, data }))
+            .then (data => resolve({ user, repo, sha, data }))
             .catch(()   => reject (`${ user }/${ repo }/${ sha }/.shrome.json not found`))
         )
     )

@@ -35,12 +35,12 @@ class Options {
     this.table.render({ data, theme })
   }
 
-  shromeFileSuccess({ user, repo, data }) {
+  shromeFileSuccess({ user, repo, sha, data }) {
     data = JSON.parse(data)
 
     const shrome = new Shrome({ data })
     shrome.save()
-    Config.save({ user, repo })
+    Config.save({ user, repo, sha })
 
     this.git  .render({ ok: true })
     this.table.render(data)
