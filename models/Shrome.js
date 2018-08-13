@@ -5,6 +5,7 @@ class Shrome {
     this.data = data
 
     this.sanitized = JSON.parse(JSON.stringify(this.data))
+
     Helpers.mapTree(this.sanitized.themes, (theme, data, i, d, base) => {
       if (theme.startsWith('__')) return
 

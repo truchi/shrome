@@ -15,7 +15,7 @@ class Background {
   }
 
   onCompleted(navigation) {
-    this.dataPromise.then(() => { this._onCompleted(navigation) })
+    this.dataPromise.then(() => this._onCompleted(navigation))
   }
 
   _onCompleted(navigation) {

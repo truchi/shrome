@@ -1,6 +1,7 @@
 // requires 'controllers/Background.js'
 
 const background = new Background()
+
 chrome.windows.getAll({ populate: true }, (windows) => {
   console.log(windows)
 
