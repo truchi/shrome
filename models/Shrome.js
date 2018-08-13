@@ -17,6 +17,8 @@ class Shrome {
 
       return data.__base
     })
+
+    this.sanitized.local = this.sanitized.local.replace(/\/+$/, '/') || 'http://localhost:8080/'
   }
 
   files(url, theme) {
