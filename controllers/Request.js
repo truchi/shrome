@@ -4,7 +4,7 @@ class Request {
       Request.getLastCommitSha(user, repo)
         .catch(reject)
         .then(sha =>
-          this.get(Request.shromeFileUrl(user, repo, sha))
+          this.get(Request.githubFileUrl(user, repo, sha, '.shrome.json'))
             .then (data => resolve({ user, repo, sha, data }))
             .catch(()   => reject (`${ user }/${ repo }/${ sha }/.shrome.json not found`))
         )
@@ -37,8 +37,10 @@ class Request {
     })
   }
 
-  static shromeFileUrl(user, repo, sha) {
-    return `https://rawgit.com/${ user }/${ repo }/${ sha }/.shrome.json`
+  static githubFileUrl(user, repo, sha, file) {
+    file = file.replace(/^\/+/, '')
+
+    return `https://rawgit.com/${ user }/${ repo }/${ sha }/${ file }`
   }
 
   static commitsApiUrl(user, repo) {
