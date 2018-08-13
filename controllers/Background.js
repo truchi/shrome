@@ -26,8 +26,8 @@ class Background {
     const files = this.shrome.files(url, this.config.theme)
     chrome.tabs.sendMessage(id, {
       files: {
-        js: ['console.log(\'here\')'],
-        css: files
+        js : files.js,
+        css: files.css
       }
     })
   }

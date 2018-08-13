@@ -60,7 +60,8 @@ class Table {
   compileTheme(theme, data, depth) {
     const match = data.__match ? Array.isArray(data.__match) ? data.__match : [ data.__match ] : null
     const base  = data.__base
-    const files = data.__files
+    const js    = data.__js
+    const css   = data.__css
 
     return `
       <li class="theme">
@@ -72,7 +73,8 @@ class Table {
         </div>
         ${ match ? `Match: <ul class="matches">${ match.map(match => `<li class="match">${ match }</li>`).join('') }</ul>` : '' }
         ${ base  ? `<div class="base">Base: <span>${ base }</span></div>` : '' }
-        ${ files ? `Files: <ul class="files">${ files.map(file => `<li class="file">${ file }</li>`).join('') }</ul>` : '' }
+        ${ js    ? `JS: <ul class="js">${ js.map(js => `<li class="file">${ js }</li>`).join('') }</ul>` : '' }
+        ${ css   ? `CSS: <ul class="css">${ css.map(css => `<li class="file">${ css }</li>`).join('') }</ul>` : '' }
         ${ this.compileThemes(data, ++depth) }
       </li>
     `

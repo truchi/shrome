@@ -10,7 +10,8 @@ class Shrome {
 
       const makeArr = obj => obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
       data.__match  = makeArr(data.__match).map(match => Shrome.getRegExp(match))
-      data.__files  = makeArr(data.__files)
+      data.__js     = makeArr(data.__js)
+      data.__css    = makeArr(data.__css)
       data.__base   = (base || '') + (data.__base || '')
 
       return data.__base
@@ -21,14 +22,16 @@ class Shrome {
     if (!theme) return []
 
     const data  = this.sanitized.themes[theme]
-    let   files = []
+    let   files = { js: [], css: [] }
 
     Helpers.mapTree(data, (theme, data) => {
       if (theme.startsWith('__'))                       return true
       if (!data.__match.length)                         return true
       if (!data.__match.some(match => match.test(url))) return false
 
-      data.__files.forEach(file => files.push(`${ data.__base }/${ file }`))
+      data.__js .forEach(js  => files.js .push(`${ data.__base }/${ js  }`))
+      data.__css.forEach(css => files.css.push(`${ data.__base }/${ css }`))
+
       return true
     })
 
