@@ -28,12 +28,17 @@ class Request {
 
         if (that.readyState === XMLHttpRequest.DONE) {
           if (that.status === 200) resolve(that.responseText)
-          else                     reject ()
+          else                     reject (that.statusText  )
         }
       }
 
       xhr.open('GET', url, true)
-      xhr.send()
+
+      try {
+        xhr.send()
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 
