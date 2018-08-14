@@ -35,6 +35,8 @@ class Table {
   }
 
   render({ data, theme }) {
+    if (!data) return this
+
     this.detach()
 
     this.$table.innerHTML = `
@@ -42,10 +44,13 @@ class Table {
       ${ this.compileThemes(data.themes) }
     `
 
-    const $radio = this.$table.querySelector(`input[value="${ theme }"]`)
-    if ($radio) $radio.checked = true
+    if (theme) {
+      this.$table.querySelector(`input[value="${ theme }"]`).checked = true
+    }
 
     this.attach()
+
+    return this
   }
 
   compileThemes(themes, depth = 0) {
