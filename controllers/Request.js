@@ -2,12 +2,12 @@ class Request {
   static getShromeFile(user, repo) {
     return new Promise((resolve, reject) =>
       Request.getLastCommitSha(user, repo)
-        .catch(reject)
         .then(sha =>
           this.get(Request.githubFileUrl(user, repo, sha, '.shrome.json'))
-            .then (data => resolve({ user, repo, sha, data }))
+            .then (data => resolve({ data, sha }))
             .catch(()   => reject (`${ user }/${ repo }/${ sha }/.shrome.json not found`))
         )
+        .catch(reject)
     )
   }
 

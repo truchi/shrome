@@ -26,10 +26,11 @@ class Config {
 }
 
 Config.default = {
+  local: true,
   user : 'truchi',
   repo : 'shrome-themes',
-  local: false,
-  sha  : '',
+  url  : 'http://localhost:8080/',
+  sha  : null,
   theme: null
 }
 
