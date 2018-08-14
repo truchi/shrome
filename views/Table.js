@@ -35,18 +35,13 @@ class Table {
   }
 
   render({ data, theme }) {
-    if (!data) return this
-
     this.detach()
 
-    this.$table.innerHTML = `
-      <div class="local">Local: <span>${ data.local }</span></div>
-      ${ this.compileThemes(data.themes) }
-    `
+    this.$table.innerHTML = data
+      ? this.compileThemes(data)
+      : ''
 
-    if (theme) {
-      this.$table.querySelector(`input[value="${ theme }"]`).checked = true
-    }
+    if (theme) this.$table.querySelector(`input[value="${ theme }"]`).checked = true
 
     this.attach()
 

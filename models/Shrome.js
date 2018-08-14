@@ -6,7 +6,7 @@ class Shrome {
 
     this.sanitized = JSON.parse(JSON.stringify(this.data))
 
-    Helpers.mapTree(this.sanitized.themes, (theme, data, i, d, base) => {
+    Helpers.mapTree(this.sanitized, (theme, data, i, d, base) => {
       if (theme.startsWith('__')) return
 
       const makeArr = obj => obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
@@ -17,14 +17,12 @@ class Shrome {
 
       return data.__base
     })
-
-    this.sanitized.local = this.sanitized.local.replace(/\/+$/, '/') || 'http://localhost:8080/'
   }
 
   files(url, theme) {
     if (!theme) return []
 
-    const data  = this.sanitized.themes[theme]
+    const data  = this.sanitized[theme]
     let   files = { js: [], css: [] }
 
     Helpers.mapTree(data, (theme, data) => {

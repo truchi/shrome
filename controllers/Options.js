@@ -26,17 +26,6 @@ class Options {
   }
 
   attach() {
-    // this.git.$dispatcher.addEventListener('git:form', ({ detail: { user, repo } }) => {
-    //   if (user && repo) {
-    //     Request.getShromeFile(user, repo)
-    //       .then (this.shromeFileSuccess)
-    //       .catch(this.shromeFileFail)
-    //   } else {
-    //     this.shromeFileFail()
-    //   }
-    // })
-    // this.table.$dispatcher.addEventListener('table:theme', ({ detail: { theme } }) => Config.save({ theme }))
-
     this.git  .$dispatcher.addEventListener('git:form'   , this.onForm )
     this.table.$dispatcher.addEventListener('table:theme', this.onTheme)
   }
@@ -48,7 +37,11 @@ class Options {
     let config = { ...this.config, local, user, repo, url }
 
     if (local) {
-      shromeFilePromise = Request.get(`${ url }/.shrome.json`)
+      shromeFilePromise = new Promise((resolve, reject) =>
+        Request.get(`${ url }/.shrome.json`)
+          .then(data => resolve({ data, sha: Config.default.sha }))
+          .catch(reject)
+      )
     } else {
       if (!user || !repo) return this.display({
         config,
@@ -63,11 +56,14 @@ class Options {
     }
 
     shromeFilePromise
-      .then(({ data, sha = Config.default.sha  }) => {
-        config = { ...config, sha }
+      .then(({ data, sha }) => {
+        config = { ...config, sha, theme: Config.default.theme }
+        data   = JSON.parse(data)
+        const shrome = new Shrome({ data })
 
-        this.display({ config })
+        this.display({ config, shrome })
         this.saveConfig(config)
+        shrome.save()
       })
       .catch((error) => {
         this.display({ config, error })
