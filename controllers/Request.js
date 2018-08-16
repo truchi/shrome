@@ -42,6 +42,13 @@ class Request {
     })
   }
 
+  static localFileUrl(url, file) {
+    url  = url .replace(/\/+$/, '')
+    file = file.replace(/^\/+/, '')
+
+    return `${ url }/${ file }`
+  }
+
   static githubFileUrl(user, repo, sha, file) {
     file = file.replace(/^\/+/, '')
 
