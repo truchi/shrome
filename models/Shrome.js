@@ -56,7 +56,7 @@ export default class Shrome {
       chrome.storage.sync.get('data', ({ data }) =>
         chrome.runtime.lastError
           ? reject (chrome.runtime.lastError)
-          : resolve(new Shrome({ data: data ? JSON.parse(data) : Shrome.default }))
+          : resolve(new Shrome({ data: data ? JSON.parse(data) : {} }))
       )
     )
   }
@@ -67,11 +67,5 @@ export default class Shrome {
     const flags   = string.slice(pos + 1, string.length)
 
     return new RegExp(pattern, flags)
-  }
-
-  static get default() {
-    return {
-      themes: {}
-    }
   }
 }
