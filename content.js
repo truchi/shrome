@@ -13,8 +13,8 @@ const clear = () => {
 
 const onMessage = data => {
   clear()
-  data.files.js .map(js  => inject('script', js ))
   data.files.css.map(css => inject('style' , css))
+  data.files.js .map(js  => inject('script', js ))
 }
 
 chrome.runtime.onMessage.addListener(onMessage)
