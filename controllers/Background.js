@@ -7,16 +7,40 @@ export default class Background {
     this.config = null
     this.shrome = null
 
-    Promise.all([ Config.get(), Shrome.get() ])
+    this.attach      = this.attach     .bind(this)
+    this.onCompleted = this.onCompleted.bind(this)
+
+    this.load()
+      .then(this.attach)
+  }
+
+  load() {
+    return Promise.all([ Config.get(), Shrome.get() ])
       .then(([ config, shrome ]) => {
         this.config = config
         this.shrome = shrome
       })
-      .then(this.events.bind(this))
   }
 
-  events() {
-    chrome.webNavigation.onCompleted.addListener(this.onCompleted.bind(this))
+  attach() {
+    chrome.webNavigation.onCompleted.addListener(this.onCompleted)
+  }
+
+  inject(id, url) {
+    this.getFiles(url)
+      .then(([ js, css ]) => chrome.tabs.sendMessage(id, { files: { js, css } }))
+  }
+
+  getFiles(url) {
+    const files = this.shrome.files(url, this.config.theme, this.config.local)
+    const base  = (file) => this.config.local
+      ? Request.makeUrl(this.config.url, file)
+      : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
+
+    return Promise.all([
+      Promise.all(files.js .map(js  => Request.get(base(js )))),
+      Promise.all(files.css.map(css => Request.get(base(css))))
+    ])
   }
 
   onCompleted(navigation) {
@@ -24,17 +48,6 @@ export default class Background {
     const id  = navigation.tabId
     const url = navigation.url
 
-    const files = this.shrome.files(url, this.config.theme, this.config.local)
-    const base  = (file) => this.config.local
-      ? Request.makeUrl(this.config.url, file)
-      : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
-
-    Promise.all([
-      Promise.all(files.js .map(js  => Request.get(base(js )))),
-      Promise.all(files.css.map(css => Request.get(base(css))))
-    ])
-      .then(([ js, css ]) => {
-        chrome.tabs.sendMessage(id, { files: { js, css } })
-      })
+    this.inject(id, url)
   }
 }
