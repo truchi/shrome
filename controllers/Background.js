@@ -8,11 +8,13 @@ export default class Background {
     this.shrome = null
 
     this.attach      = this.attach     .bind(this)
+    this.injectAll   = this.injectAll  .bind(this)
     this.onCompleted = this.onCompleted.bind(this)
     this.onMessage   = this.onMessage  .bind(this)
 
     this.load()
       .then(this.attach)
+      .then(this.injectAll)
   }
 
   load() {
@@ -26,6 +28,12 @@ export default class Background {
   attach() {
     chrome.webNavigation.onCompleted.addListener(this.onCompleted)
     chrome.runtime      .onMessage  .addListener(this.onMessage  )
+  }
+
+  injectAll() {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => this.inject(tab.id, tab.url))
+    })
   }
 
   inject(id, url) {
@@ -54,6 +62,6 @@ export default class Background {
   }
 
   onMessage(message) {
-    if (message.reload) this.load().then(console.log)
+    if (message.reload) this.load().then(this.injectAll)
   }
 }
