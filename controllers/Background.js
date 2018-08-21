@@ -38,7 +38,9 @@ export default class Background {
 
   inject(id, url) {
     this.getFiles(url)
-      .then(([ js, css ]) => chrome.tabs.sendMessage(id, { files: { js, css } }))
+      .then(({ js, css, fail }) => {
+        chrome.tabs.sendMessage(id, { files: { js, css } })
+      })
   }
 
   getFiles(url) {
@@ -47,10 +49,20 @@ export default class Background {
       ? Request.makeUrl(this.config.url, file)
       : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
 
-    return Promise.all([
-      Promise.all(files.js .map(js  => Request.get(base(js )))),
-      Promise.all(files.css.map(css => Request.get(base(css))))
-    ])
+    return new Promise(resolve => {
+      const res = { js: [], css: [], fail: [] }
+      const map = (key) => (file) => {
+        return Request.get(base(file))
+          .then (content => res[key].push(content))
+          .catch(()      => res.fail.push(file   ))
+      }
+
+      const jsPromises  = files.js .map(map('js' ))
+      const cssPromises = files.css.map(map('css'))
+
+      Promise.all(jsPromises.concat(cssPromises))
+        .finally(() => resolve(res))
+    })
   }
 
   onCompleted(navigation) {
