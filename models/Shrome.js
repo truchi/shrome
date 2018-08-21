@@ -20,10 +20,10 @@ class Shrome {
   }
 
   files(url, theme) {
-    if (!theme) return []
+    let files = { js: [], css: [] }
+    if (!theme) return files
 
-    const data  = this.sanitized[theme]
-    let   files = { js: [], css: [] }
+    const data = this.sanitized[theme]
 
     Helpers.mapTree(data, (theme, data) => {
       if (theme.startsWith('__'))                       return true
