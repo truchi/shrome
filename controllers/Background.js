@@ -9,6 +9,7 @@ export default class Background {
 
     this.attach      = this.attach     .bind(this)
     this.onCompleted = this.onCompleted.bind(this)
+    this.onMessage   = this.onMessage  .bind(this)
 
     this.load()
       .then(this.attach)
@@ -24,6 +25,7 @@ export default class Background {
 
   attach() {
     chrome.webNavigation.onCompleted.addListener(this.onCompleted)
+    chrome.runtime      .onMessage  .addListener(this.onMessage  )
   }
 
   inject(id, url) {
@@ -49,5 +51,9 @@ export default class Background {
     const url = navigation.url
 
     this.inject(id, url)
+  }
+
+  onMessage(message) {
+    if (message.reload) this.load().then(console.log)
   }
 }

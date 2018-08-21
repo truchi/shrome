@@ -60,6 +60,8 @@ class Options {
         const shrome = new Shrome({ data })
 
         this.display({ config, shrome })
+        chrome.runtime.sendMessage({ reload: true })
+
         this.saveConfig(config)
         shrome.save()
       })
@@ -71,6 +73,8 @@ class Options {
   }
 
   onTheme({ detail: { theme } }) {
+    chrome.runtime.sendMessage({ reload: true })
+
     this.saveConfig({ theme })
 
     return this
