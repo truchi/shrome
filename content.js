@@ -8,7 +8,7 @@ const inject = (tag, text) => {
 }
 
 const clear = () => {
-  [...document.querySelectorAll(`[${ attribute }]`)].forEach(tag => tag.remove())
+  ;[...document.querySelectorAll(`[${ attribute }]`)].forEach(tag => tag.remove())
 }
 
 const onMessage = data => {
