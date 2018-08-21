@@ -25,7 +25,7 @@ class Background {
 
     const files = this.shrome.files(url, this.config.theme, this.config.local)
     const base  = (file) => this.config.local
-      ? Request.localFileUrl(this.config.url, file)
+      ? Request.makeUrl(this.config.url, file)
       : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
 
     Promise.all([

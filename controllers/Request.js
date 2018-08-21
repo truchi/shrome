@@ -42,7 +42,7 @@ class Request {
     })
   }
 
-  static localFileUrl(url, file) {
+  static makeUrl(url, file) {
     url  = url .replace(/\/+$/, '')
     file = file.replace(/^\/+/, '')
 
@@ -50,9 +50,7 @@ class Request {
   }
 
   static githubFileUrl(user, repo, sha, file) {
-    file = file.replace(/^\/+/, '')
-
-    return `https://rawgit.com/${ user }/${ repo }/${ sha }/${ file }`
+    return Request.makeUrl(`https://rawgit.com/${ user }/${ repo }/${ sha }`, file)
   }
 
   static commitsApiUrl(user, repo) {

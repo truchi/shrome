@@ -31,14 +31,12 @@ class Options {
   }
 
   onForm({ detail: { local, user, repo, url } }) {
-    url = url.replace(/\/+$/, '')
-
     let shromeFilePromise
     let config = { ...this.config, local, user, repo, url }
 
     if (local) {
       shromeFilePromise = new Promise((resolve, reject) =>
-        Request.get(`${ url }/.shrome.json`)
+        Request.get(Request.makeUrl(url, '.shrome.json'))
           .then(data => resolve({ data, sha: Config.default.sha }))
           .catch(reject)
       )
