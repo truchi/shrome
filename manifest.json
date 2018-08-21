@@ -4,15 +4,8 @@
 	"version": "0.0.1",
   "permissions": ["*://*/*", "webNavigation", "tabs", "storage"],
   "background": {
-    "scripts": [
-      "Helpers.js",
-      "models/Config.js",
-      "models/Shrome.js",
-      "controllers/Request.js",
-      "controllers/Background.js",
-      "background.js"
-    ],
-    "persistant": false
+    "page": "background.html",
+    "persistent": false
   },
   "content_scripts": [
     {

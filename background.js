@@ -1,5 +1,3 @@
-// requires 'controllers/Background.js'
+import Background from './controllers/Background.js'
 
-const background = new Background()
-
-chrome.webNavigation.onCompleted.addListener(background.onCompleted.bind(background))
+new Background()

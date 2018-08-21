@@ -1,4 +1,15 @@
-class Config {
+export default class Config {
+  static get default() {
+    return {
+      local: true,
+      user : 'truchi',
+      repo : 'shrome-themes',
+      url  : 'http://localhost:8080/',
+      sha  : null,
+      theme: null
+    }
+  }
+
   static save(cfg) {
     const keys   = Object.keys(Config.default)
     const config = Object.keys(cfg)
@@ -24,14 +35,3 @@ class Config {
     )
   }
 }
-
-Config.default = {
-  local: true,
-  user : 'truchi',
-  repo : 'shrome-themes',
-  url  : 'http://localhost:8080/',
-  sha  : null,
-  theme: null
-}
-
-window.Config = Config

@@ -1,6 +1,6 @@
-// requires options/models/Config.js
-// requires options/models/Shrome.js
-// requires options/controllers/Request.js
+import Config  from '../models/Config.js'
+import Shrome  from '../models/Shrome.js'
+import Request from './Request.js'
 
 class Options {
   constructor({ git, table }) {

@@ -1,4 +1,4 @@
-class Request {
+export default class Request {
   static getShromeFile(user, repo) {
     return new Promise((resolve, reject) =>
       Request.getLastCommitSha(user, repo)
@@ -57,5 +57,3 @@ class Request {
     return `https://api.github.com/repos/${ user }/${ repo }/commits`
   }
 }
-
-window.Request = Request

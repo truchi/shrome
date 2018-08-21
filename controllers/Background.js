@@ -1,24 +1,25 @@
-// requires 'models/Config.js'
-// requires 'models/Shrome.js'
-// requires 'controllers/Request.js'
+import Config  from '../models/Config.js'
+import Shrome  from '../models/Shrome.js'
+import Request from './Request.js'
 
-class Background {
+export default class Background {
   constructor() {
     this.config = null
     this.shrome = null
 
-    this.dataPromise = Promise.all([ Config.get(), Shrome.get() ])
+    Promise.all([ Config.get(), Shrome.get() ])
       .then(([ config, shrome ]) => {
         this.config = config
         this.shrome = shrome
       })
+      .then(this.events.bind(this))
+  }
+
+  events() {
+    chrome.webNavigation.onCompleted.addListener(this.onCompleted.bind(this))
   }
 
   onCompleted(navigation) {
-    this.dataPromise.then(() => this._onCompleted(navigation))
-  }
-
-  _onCompleted(navigation) {
     if (navigation.frameId !== 0) return
     const id  = navigation.tabId
     const url = navigation.url
@@ -37,6 +38,3 @@ class Background {
       })
   }
 }
-
-
-window.Background = Background

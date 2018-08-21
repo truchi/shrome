@@ -1,6 +1,6 @@
-// requires 'helpers.js'
+import Helpers from '../Helpers.js'
 
-class Shrome {
+export default class Shrome {
   constructor({ data }) {
     this.data = data
 
@@ -68,10 +68,10 @@ class Shrome {
 
     return new RegExp(pattern, flags)
   }
-}
 
-Shrome.default = {
-  themes: {}
+  static get default() {
+    return {
+      themes: {}
+    }
+  }
 }
-
-window.Shrome = Shrome

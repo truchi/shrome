@@ -1,4 +1,4 @@
-class Helpers {
+export default class Helpers {
   static mapTree(tree, cb) {
     return Helpers._mapTree(tree, cb, 0)
   }
@@ -17,5 +17,3 @@ class Helpers {
     return object !== null && object !== undefined && object.constructor === Object
   }
 }
-
-window.Helpers = Helpers
