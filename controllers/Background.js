@@ -31,9 +31,9 @@ export default class Background {
   }
 
   injectAll() {
-    chrome.tabs.query({}, (tabs) => {
-      tabs.forEach(tab => this.inject(tab.id, tab.url))
-    })
+    chrome.windows.getAll({ populate: true }, (windows) =>
+      windows.forEach(window => window.tabs.forEach(tab => this.inject(tab.id, tab.url)))
+    )
   }
 
   inject(id, url) {
