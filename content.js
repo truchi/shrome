@@ -11,10 +11,20 @@ const clear = () => {
   ;[...document.querySelectorAll(`[${ attribute }]`)].forEach(tag => tag.remove())
 }
 
-const onMessage = data => {
+const onMessage = files => {
   clear()
-  data.files.css.map(css => inject('style' , css))
-  data.files.js .map(js  => inject('script', js ))
+  files
+    .filter (file => file.content)
+    .forEach(file => inject(tag(file.type), file.content))
+}
+
+const tag = (type) => {
+  switch (type) {
+    case 'js':
+      return 'script'
+    case 'css':
+      return 'style'
+  }
 }
 
 chrome.runtime.onMessage.addListener(onMessage)

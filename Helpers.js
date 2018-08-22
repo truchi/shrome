@@ -16,4 +16,14 @@ export default class Helpers {
   static isObject(object) {
     return object !== null && object !== undefined && object.constructor === Object
   }
+
+  static groupBy(object, key) {
+    return Object.entries(object).reduce((o, [ k, v ]) => {
+      const value = v[key]
+      o[value] || (o[value] = [])
+      o[value].push(v)
+
+      return o
+    }, {})
+  }
 }

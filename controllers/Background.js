@@ -1,3 +1,4 @@
+import Helpers from '../Helpers.js'
 import Config  from '../models/Config.js'
 import Shrome  from '../models/Shrome.js'
 import Request from './Request.js'
@@ -37,7 +38,9 @@ export default class Background {
 
   inject(id, url) {
     this.getFiles(url)
-      .then(({ js, css, fail }) => chrome.tabs.sendMessage(id, { files: { js, css } }))
+      .then(files => {
+        chrome.tabs.sendMessage(id, files)
+      })
   }
 
   getFiles(url) {
@@ -46,25 +49,14 @@ export default class Background {
     const base    = (file) => this.config.local
       ? Request.makeUrl(this.config.url, file)
       : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
-    const promises = (key, type, files) =>
-      files.map((file, index) =>
-        Request.get(file = base(file))
-          .then (content => results[type].push(content))
-          .catch(error   =>
-            (results.fail[key] || (results.fail[key] = []))
-              && results.fail[key].push({ key, type, index, file, error })
-        )
-      )
 
-    return new Promise(resolve => Promise
-      .all(
-        [].concat.apply([],
-          Object.entries(files)
-            .map(([ key, { js, css } ]) => promises(key, 'js', js).concat(promises(key, 'css', css)))
-        )
-      )
-      .finally(() => resolve(results))
+    const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
+      Request.get(base(file))
+        .then   (content => data.forEach(d => d.content = content))
+        .catch  (error   => data.forEach(d => d.error   = error  ))
     )
+
+    return new Promise(resolve => Promise.all(promises).finally(() => resolve(files)))
   }
 
   onCompleted(navigation) {
