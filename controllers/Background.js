@@ -14,7 +14,6 @@ export default class Background {
 
     this.load()
       .then(this.attach)
-      .then(this.injectAll)
   }
 
   load() {
