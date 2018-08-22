@@ -1,6 +1,6 @@
 export default class Helpers {
-  static mapTree(tree, cb) {
-    return Helpers._mapTree(tree, cb, 0)
+  static mapTree(tree, cb, init) {
+    return Helpers._mapTree(tree, cb, 0, init)
   }
 
   static _mapTree(tree, cb, depth, ret) {

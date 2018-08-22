@@ -37,31 +37,34 @@ export default class Background {
 
   inject(id, url) {
     this.getFiles(url)
-      .then(({ js, css, fail }) => {
-        chrome.tabs.sendMessage(id, { files: { js, css } })
-      })
+      .then(({ js, css, fail }) => chrome.tabs.sendMessage(id, { files: { js, css } }))
   }
 
   getFiles(url) {
-    const files = this.shrome.files(url, this.config.theme, this.config.local)
-    const base  = (file) => this.config.local
+    const results = { js: [], css: [], fail: {} }
+    const files   = this.shrome.files(url, this.config.theme)
+    const base    = (file) => this.config.local
       ? Request.makeUrl(this.config.url, file)
       : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
+    const promises = (key, type, files) =>
+      files.map((file, index) =>
+        Request.get(file = base(file))
+          .then (content => results[type].push(content))
+          .catch(error   =>
+            (results.fail[key] || (results.fail[key] = []))
+              && results.fail[key].push({ key, type, index, file, error })
+        )
+      )
 
-    return new Promise(resolve => {
-      const res = { js: [], css: [], fail: [] }
-      const map = (key) => (file) => {
-        return Request.get(base(file))
-          .then (content => res[key].push(content))
-          .catch(()      => res.fail.push(file   ))
-      }
-
-      const jsPromises  = files.js .map(map('js' ))
-      const cssPromises = files.css.map(map('css'))
-
-      Promise.all(jsPromises.concat(cssPromises))
-        .finally(() => resolve(res))
-    })
+    return new Promise(resolve => Promise
+      .all(
+        [].concat.apply([],
+          Object.entries(files)
+            .map(([ key, { js, css } ]) => promises(key, 'js', js).concat(promises(key, 'css', css)))
+        )
+      )
+      .finally(() => resolve(results))
+    )
   }
 
   onCompleted(navigation) {
