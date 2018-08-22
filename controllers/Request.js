@@ -23,22 +23,18 @@ export default class Request {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
 
-      xhr.onreadystatechange = (event) => {
-        const that = event.target
-
-        if (that.readyState === XMLHttpRequest.DONE) {
-          if (that.status === 200) resolve(that.responseText)
-          else                     reject (that.statusText  )
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) resolve(xhr.responseText)
+          else                    reject (xhr.status === 0
+                                            ? 'Unknown error'
+                                            : xhr.status + ' ' + xhr.statusText
+                                         )
         }
       }
 
       xhr.open('GET', url, true)
-
-      try {
-        xhr.send()
-      } catch (error) {
-        reject(error)
-      }
+      xhr.send()
     })
   }
 
