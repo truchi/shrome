@@ -5,52 +5,52 @@ import Request from './Request.js'
 
 export default class Background {
   constructor() {
-    this.config = null
-    this.shrome = null
+    this._config = null
+    this._shrome = null
 
-    this.attach      = this.attach     .bind(this)
-    this.injectAll   = this.injectAll  .bind(this)
-    this.onCompleted = this.onCompleted.bind(this)
-    this.onMessage   = this.onMessage  .bind(this)
+    this._attach      = this._attach     .bind(this)
+    this._injectAll   = this._injectAll  .bind(this)
+    this._onCompleted = this._onCompleted.bind(this)
+    this._onMessage   = this._onMessage  .bind(this)
 
-    this.load()
-      .then(this.attach)
+    this._load()
+      .then(this._attach)
   }
 
-  load() {
+  _load() {
     return Promise.all([ Config.get(), Shrome.get() ])
       .then(([ config, shrome ]) => {
-        this.config = config
-        this.shrome = shrome
+        this._config = config
+        this._shrome = shrome
       })
   }
 
-  attach() {
-    chrome.webNavigation.onCompleted.addListener(this.onCompleted)
-    chrome.runtime      .onMessage  .addListener(this.onMessage  )
+  _attach() {
+    chrome.webNavigation.onCompleted.addListener(this._onCompleted)
+    chrome.runtime      .onMessage  .addListener(this._onMessage  )
   }
 
-  injectAll() {
+  _injectAll() {
     chrome.windows.getAll({ populate: true }, (windows) =>
-      windows.forEach(window => window.tabs.forEach(tab => this.inject(tab.id, tab.url)))
+      windows.forEach(window => window.tabs.forEach(tab => this._inject(tab.id, tab.url)))
     )
   }
 
-  inject(id, url) {
-    this.getFiles(url)
+  _inject(id, url) {
+    this._getFiles(url)
       .then(files => {
         console.log(files)
         chrome.tabs.sendMessage(id, files)
       })
   }
 
-  getFiles(url) {
+  _getFiles(url) {
     const results = { js: [], css: [], fail: {} }
-    const { matches, files }   = this.shrome.files(url, this.config.theme)
+    const { matches, files }   = this._shrome.files(url, this._config.theme)
     console.log(matches, files)
-    const base    = (file) => this.config.local
-      ? Request.makeUrl(this.config.url, file)
-      : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
+    const base    = (file) => this._config.local
+      ? Request.makeUrl(this._config.url, file)
+      : Request.githubFileUrl(this._config.user, this._config.repo, this._config.sha, file)
 
     const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
       Request.get(file = base(file))
@@ -62,15 +62,15 @@ export default class Background {
     return new Promise(resolve => Promise.all(promises).finally(() => resolve(files)))
   }
 
-  onCompleted(navigation) {
+  _onCompleted(navigation) {
     if (navigation.frameId !== 0) return
     const id  = navigation.tabId
     const url = navigation.url
 
-    this.inject(id, url)
+    this._inject(id, url)
   }
 
-  onMessage(message) {
-    if (message.reload) this.load().then(this.injectAll)
+  _onMessage(message) {
+    if (message.reload) this._load().then(this._injectAll)
   }
 }
