@@ -1,5 +1,6 @@
-import Source from './views/Source.js'
-import Config from './views/Config.js'
+import Source  from './views/Source.js'
+import Config  from './views/Config.js'
+import Options from './controllers/Options.js'
 
 const $source = document.getElementById('source')
 const $config = document.getElementById('config')

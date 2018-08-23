@@ -2,37 +2,37 @@ import Config  from '../models/Config.js'
 import Shrome  from '../models/Shrome.js'
 import Request from './Request.js'
 
-class Options {
+export default class Options {
   constructor({ source, config }) {
-    this.source = source
-    this.config = config
-    this._config = Config.default
+    this._source = source
+    this._config = config
+    this.__config = Config.default
 
-    this.onSource = this.onSource.bind(this)
-    this.onTheme  = this.onTheme .bind(this)
+    this._onSource = this._onSource.bind(this)
+    this._onTheme  = this._onTheme .bind(this)
 
-    this.init()
+    this._init()
   }
 
-  init() {
+  _init() {
     return Promise.all([ Config.get(), Shrome.get() ])
       .then(([ config, shrome ]) => {
-        this._config = config
+        this.__config = config
 
-        this.attach()
-        this.display({ config, shrome })
+        this._attach()
+        this._display({ config, shrome })
       })
       .catch(console.error)
   }
 
-  attach() {
-    this.source.on('change', this.onSource)
-    this.config.on('theme' , this.onTheme )
+  _attach() {
+    this._source.on('change', this._onSource)
+    this._config.on('theme' , this._onTheme )
   }
 
-  onSource({ detail: { local, user, repo, url } }) {
+  _onSource({ detail: { local, user, repo, url } }) {
     let shromeFilePromise
-    let config = { ...this._config, local, user, repo, url }
+    let config = { ...this.__config, local, user, repo, url }
 
     if (local) {
       shromeFilePromise = new Promise((resolve, reject) =>
@@ -41,7 +41,7 @@ class Options {
           .catch(reject)
       )
     } else {
-      if (!user || !repo) return this.display({
+      if (!user || !repo) return this._display({
         config,
         error: !user && !repo
           ? 'Please fill user and repo fields'
@@ -59,28 +59,28 @@ class Options {
         data   = JSON.parse(data)
         const shrome = new Shrome({ data })
 
-        this.display({ config, shrome })
+        this._display({ config, shrome })
         chrome.runtime.sendMessage({ reload: true })
 
-        this.saveConfig(config)
+        this._saveConfig(config)
         shrome.save()
       })
       .catch((error) => {
-        this.display({ config, error })
+        this._display({ config, error })
       })
 
     return this
   }
 
-  onTheme({ detail: { theme } }) {
+  _onTheme({ detail: { theme } }) {
     chrome.runtime.sendMessage({ reload: true })
 
-    this.saveConfig({ theme })
+    this._saveConfig({ theme })
 
     return this
   }
 
-  display({ config, shrome = null, error = '' }) {
+  _display({ config, shrome = null, error = '' }) {
     const local = config.local
     const user  = config.user
     const repo  = config.repo
@@ -88,16 +88,14 @@ class Options {
     const theme = config.theme
     const data  = shrome ? shrome.data : null
 
-    this.source.render({ local, user, repo, url, error })
-    this.config.render({ data, theme })
+    this._source.render({ local, user, repo, url, error })
+    this._config.render({ data, theme })
   }
 
-  saveConfig(config) {
-    this._config = { ...this._config, ...config }
+  _saveConfig(config) {
+    this.__config = { ...this.__config, ...config }
 
-    return Config.save(this._config)
+    return Config.save(this.__config)
       .catch(console.error)
   }
 }
-
-window.Options = Options
