@@ -26,7 +26,7 @@ export default class Config extends View {
 
     if (theme === prev) {
       e.target.checked = false
-      theme    = null
+      theme = null
     }
 
     this._theme = theme
