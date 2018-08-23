@@ -39,21 +39,24 @@ export default class Background {
   inject(id, url) {
     this.getFiles(url)
       .then(files => {
+        console.log(files)
         chrome.tabs.sendMessage(id, files)
       })
   }
 
   getFiles(url) {
     const results = { js: [], css: [], fail: {} }
-    const files   = this.shrome.files(url, this.config.theme)
+    const { matches, files }   = this.shrome.files(url, this.config.theme)
+    console.log(matches, files)
     const base    = (file) => this.config.local
       ? Request.makeUrl(this.config.url, file)
       : Request.githubFileUrl(this.config.user, this.config.repo, this.config.sha, file)
 
     const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
-      Request.get(base(file))
+      Request.get(file = base(file))
         .then   (content => data.forEach(d => d.content = content))
         .catch  (error   => data.forEach(d => d.error   = error  ))
+        .finally(()      => data.forEach(d => d.file    = file   ))
     )
 
     return new Promise(resolve => Promise.all(promises).finally(() => resolve(files)))

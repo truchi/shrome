@@ -19,6 +19,7 @@ export default class Shrome {
       const css   = makeArr(data.__css).map(makeFile(base, key, 'css'))
       const files = js.concat(css)
 
+      data.__key   = key
       data.__match = match
       data.__files = files
 
@@ -31,22 +32,29 @@ export default class Shrome {
   }
 
   files(url, theme) {
-    let files = []
-    if (!theme) return files
+    let files   = []
+    let matches = {}
+    if (!theme) return { matches, files }
 
     const data = this.sanitized[theme]
 
     Helpers.mapTree(data, (theme, data) => {
-      if (theme.startsWith('__'))                       return true
-      if (!data.__match.length)                         return true // FIXME wrong, should add files!!
-      if (!data.__match.some(match => match.test(url))) return false
+      if (theme.startsWith('__')) return true
 
+      const match = data.__match
+      const index = match.length
+        ? match.findIndex(match => match.test(url))
+        : null
+
+      if (index === -1) return false
+
+      matches[data.__key] = index
       files.push(data.__files)
-
-      return true
     })
 
-    return JSON.parse(JSON.stringify([].concat.apply([], files)))
+    files = JSON.parse(JSON.stringify([].concat.apply([], files)))
+
+    return { matches, files }
   }
 
   save() {
