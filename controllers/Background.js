@@ -1,12 +1,10 @@
 import Helpers from '../Helpers.js'
-import Config  from '../models/Config.js'
 import Shrome  from '../models/Shrome.js'
 import Request from './Request.js'
 
 export default class Background {
   constructor() {
-    this._config = null
-    this._shrome = null
+    this._shrome = Shrome.default
 
     this._attach      = this._attach     .bind(this)
     this._injectAll   = this._injectAll  .bind(this)
@@ -18,11 +16,8 @@ export default class Background {
   }
 
   _load() {
-    return Promise.all([ Config.get(), Shrome.get() ])
-      .then(([ config, shrome ]) => {
-        this._config = config
-        this._shrome = shrome
-      })
+    return Shrome.get()
+      .then(shrome => this._shrome = shrome)
   }
 
   _attach() {
@@ -46,17 +41,13 @@ export default class Background {
 
   _getFiles(url) {
     const results = { js: [], css: [], fail: {} }
-    const { matches, files }   = this._shrome.files(url, this._config.theme)
+    const { matches, files }   = this._shrome.files(url)
     console.log(matches, files)
-    const base    = (file) => this._config.local
-      ? Request.makeUrl(this._config.url, file)
-      : Request.githubFileUrl(this._config.user, this._config.repo, this._config.sha, file)
 
     const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
-      Request.get(file = base(file))
-        .then   (content => data.forEach(d => d.content = content))
-        .catch  (error   => data.forEach(d => d.error   = error  ))
-        .finally(()      => data.forEach(d => d.file    = file   ))
+      Request.get(file)
+        .then (content => data.forEach(d => d.content = content))
+        .catch(error   => data.forEach(d => d.error   = error  ))
     )
 
     return new Promise(resolve => Promise.all(promises).finally(() => resolve(files)))

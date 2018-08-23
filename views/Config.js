@@ -34,11 +34,11 @@ export default class Config extends View {
     this._dispatch('theme', { theme })
   }
 
-  render({ data, theme }) {
+  render({ config, theme }) {
     this._detach()
 
-    this._$.innerHTML = data
-      ? this._compileThemes(data)
+    this._$.innerHTML = config
+      ? this._compileThemes(config)
       : ''
 
     if (theme) this._$.querySelector(`input[value="${ theme }"]`).checked = true
@@ -48,8 +48,8 @@ export default class Config extends View {
     return this
   }
 
-  _compileThemes(themes, depth = 0) {
-    const html = Object.entries(themes)
+  _compileThemes(config, depth = 0) {
+    const html = Object.entries(config)
       .filter(([ theme, data ]) => !theme.startsWith('__'))
       .map(([ theme, data ]) => this._compileTheme(theme, data, depth))
       .reduce((html, part) => html += part, '')
