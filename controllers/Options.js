@@ -3,13 +3,13 @@ import Shrome  from '../models/Shrome.js'
 import Request from './Request.js'
 
 class Options {
-  constructor({ git, table }) {
-    this.git    = git
-    this.table  = table
-    this.config = Config.default
+  constructor({ source, config }) {
+    this.source = source
+    this.config = config
+    this._config = Config.default
 
-    this.onForm  = this.onForm .bind(this)
-    this.onTheme = this.onTheme.bind(this)
+    this.onSource = this.onSource.bind(this)
+    this.onTheme  = this.onTheme .bind(this)
 
     this.init()
   }
@@ -17,7 +17,7 @@ class Options {
   init() {
     return Promise.all([ Config.get(), Shrome.get() ])
       .then(([ config, shrome ]) => {
-        this.config = config
+        this._config = config
 
         this.attach()
         this.display({ config, shrome })
@@ -26,13 +26,13 @@ class Options {
   }
 
   attach() {
-    this.git  .$dispatcher.addEventListener('git:form'   , this.onForm )
-    this.table.$dispatcher.addEventListener('table:theme', this.onTheme)
+    this.source.on('change', this.onSource)
+    this.config.on('theme' , this.onTheme )
   }
 
-  onForm({ detail: { local, user, repo, url } }) {
+  onSource({ detail: { local, user, repo, url } }) {
     let shromeFilePromise
-    let config = { ...this.config, local, user, repo, url }
+    let config = { ...this._config, local, user, repo, url }
 
     if (local) {
       shromeFilePromise = new Promise((resolve, reject) =>
@@ -88,14 +88,14 @@ class Options {
     const theme = config.theme
     const data  = shrome ? shrome.data : null
 
-    this.git  .render({ local, user, repo, url, error })
-    this.table.render({ data, theme })
+    this.source.render({ local, user, repo, url, error })
+    this.config.render({ data, theme })
   }
 
   saveConfig(config) {
-    this.config = { ...this.config, ...config }
+    this._config = { ...this._config, ...config }
 
-    return Config.save(this.config)
+    return Config.save(this._config)
       .catch(console.error)
   }
 }
