@@ -5,21 +5,19 @@ export default class Shrome {
     this.set(shrome)
   }
 
-  set(o) {
+  set(o, fromUser = false) {
     const isDefined = (o  ) => typeof o !== 'undefined'
     const set       = (key) => this[key] = o[key]
 
     Object.keys(Shrome.default)
       .map(key => isDefined(o[key]) && set(key))
 
-    o.config && this._sanitize()
+    fromUser && o.config && this._sanitize()
 
     return this
   }
 
   _sanitize() {
-    if (this.config.__sanitized) return this
-
     // FIXME view broken TODO redo view
     Helpers.mapTree(this.config, (theme, data, i, d, { base, key }) => {
       if (theme.startsWith('__')) return
@@ -44,8 +42,6 @@ export default class Shrome {
 
       return { base, key }
     }, { base: '', key: '' })
-
-    this.config.__sanitized = true // NOTE user must not write this into his .shrome.json
 
     return this
   }

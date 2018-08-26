@@ -45,7 +45,7 @@ export default class Options {
     request.getConfig()
       .then(({ config, sha }) =>
         this._shrome
-          .set({ sha, theme: Shrome.default.theme, config })
+          .set({ sha, theme: Shrome.default.theme, config }, true)
           .save()
           .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
       )
