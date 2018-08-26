@@ -41,11 +41,12 @@ export default class Background {
 
   _getFiles(url) {
     const results = { js: [], css: [], fail: {} }
+    const request = new Request(this._shrome)
     const { matches, files }   = this._shrome.files(url)
     console.log(matches, files)
 
     const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
-      Request.get(file)
+      request.getFile(file)
         .then (content => data.forEach(d => d.content = content))
         .catch(error   => data.forEach(d => d.error   = error  ))
     )

@@ -30,13 +30,9 @@ export default class Options {
     let shromeFilePromise
     this._shrome.set({ local, user, repo, url })
 
-    if (local) {
-      shromeFilePromise = new Promise((resolve, reject) =>
-        Request.get(Request.makeUrl(url, '.shrome.json'))
-          .then(data => resolve({ data, sha: Shrome.default.sha }))
-          .catch(reject)
-      )
-    } else {
+    const request = new Request(this._shrome)
+
+    if (!local) {
       if (!user || !repo) return this._display(
         !user && !repo
           ? 'Please fill user and repo fields'
@@ -44,14 +40,12 @@ export default class Options {
             ? 'Please fill user field'
             : 'Please fill repo field'
       )
-
-      shromeFilePromise = Request.getShromeFile(user, repo)
     }
 
-    shromeFilePromise
-      .then(({ data, sha }) =>
+    request.getConfig()
+      .then(({ config, sha }) =>
         this._shrome
-          .set({ sha, theme: Shrome.default.theme, config: JSON.parse(data) })
+          .set({ sha, theme: Shrome.default.theme, config })
           .save()
           .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
       )

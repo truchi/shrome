@@ -43,7 +43,7 @@ export default class Shrome {
       delete data.__css
 
       return { base, key }
-    }, { base: this.url, key: '' }) // FIXME doesnt work for github TODO redo request
+    }, { base: '', key: '' })
 
     this.config.__sanitized = true // NOTE user must not write this into his .shrome.json
 
