@@ -37,8 +37,14 @@ export default class Shrome {
     this.source.hasOwnProperty(mode) && (this.source[this.source.mode].url = url)
   }
 
-  set(o) {
+  set(o, sanitize = false) {
+    const url = o.url
+    delete o.url
+
     Helpers.merge(this, o)
+    url && (this.url = url)
+
+    sanitize && o.config && o.config.themes && this._sanitize()
 
     return this
   }
@@ -51,7 +57,7 @@ export default class Shrome {
 
   _sanitize() {
     // FIXME view broken TODO redo view
-    Helpers.mapTree(this.themes, (theme, data, i, d, { path, key }) => {
+    Helpers.mapTree(this.config.themes, (theme, data, i, d, { path, key }) => {
       if (theme.startsWith('__')) return
 
       const cleanFiles = (file) => file.type
@@ -100,16 +106,16 @@ export default class Shrome {
   files(url) {
     let files   = []
     let matches = {}
-    if (!this.theme) return { matches, files }
+    if (!this.config.theme) return { matches, files }
 
-    const data = this.themes[this.theme]
+    const theme = this.config.themes[this.config.theme]
 
-    Helpers.mapTree(data, (theme, data) => {
+    Helpers.mapTree(theme, (theme, data) => {
       if (theme.startsWith('__')) return true
 
-      const match = data.__match
-      const index = match.length
-        ? match.findIndex(match => Shrome._getRegExp(match).test(url))
+      const _matches = data.__matches
+      const index    = _matches.length
+        ? _matches.findIndex(match => Shrome._getRegExp(match).test(url))
         : null
 
       if (index === -1) return false

@@ -57,12 +57,12 @@ export default class Options {
       .then(({ themes, url }) =>
         this._shrome
           .set({
+            url,
             config: {
               theme: '',
               themes
             }
           }, true)
-          .do(() => this._shrome.url = url)
           .save()
           .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
       )
