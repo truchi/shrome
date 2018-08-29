@@ -8,24 +8,38 @@ export default class Shrome {
     this.set(shrome, sanitize)
   }
 
-  set mode(mode)     { this.source.mode = mode        }
   get mode()         { return this.source.mode        }
-  set localUrl(url)  { this.source.local.url = url    }
+  set mode(mode)     { this.source.mode = mode        }
   get localUrl()     { return this.source.local.url   }
-  set githubUrl(url) { this.source.github.url = url   }
+  set localUrl(url)  { this.source.local.url = url    }
   get githubUrl()    { return this.source.github.url  }
-  set user(user)     { this.source.github.user = user }
+  set githubUrl(url) { this.source.github.url = url   }
   get user()         { return this.source.github.user }
-  set repo(repo)     { this.source.github.repo = repo }
+  set user(user)     { this.source.github.user = user }
   get repo()         { return this.source.github.repo }
-  set theme(theme)   { this.config.theme = theme      }
+  set repo(repo)     { this.source.github.repo = repo }
   get theme()        { return this.config.theme       }
-  set themes(themes) { this.config.themes = themes    }
+  set theme(theme)   { this.config.theme = theme      }
   get themes()       { return this.config.themes      }
+  set themes(themes) { this.config.themes = themes    }
+  get url() {
+    const mode = this.source.mode
+
+    return this.source.hasOwnProperty(mode)
+      ? this.source[mode].url
+      : null
+  }
+  set url(url) {
+    const mode = this.source.mode
+
+    this.source.hasOwnProperty(mode) && (this.source[this.source.mode].url = url)
+  }
 
   set(o, sanitize = false) {
-    ['mode', 'localUrl', 'githubUrl', 'user', 'repo', 'theme', 'themes']
-      .forEach(key => typeof o[key] !== undefined && (this[key] = o[key]))
+    const keys = ['mode', 'localUrl', 'githubUrl', 'user', 'repo', 'theme', 'themes', 'url']
+
+    Object.entries(o)
+      .forEach(([ key, value ]) => keys.includes(key) && (this[key] = value))
 
     sanitize && o.themes && this._sanitize()
 
@@ -78,7 +92,7 @@ export default class Shrome {
       delete data.__path
 
       return { path, key }
-    }, { path: '', key: '' })
+    }, { path: this.url || '', key: '' })
 
     return this
   }

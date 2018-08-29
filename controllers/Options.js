@@ -5,7 +5,7 @@ export default class Options {
   constructor({ source, config }) {
     this._source = source
     this._config = config
-    this._shrome = Shrome.default
+    this._shrome = null
 
     this._onSource = this._onSource.bind(this)
     this._onTheme  = this._onTheme .bind(this)
@@ -30,7 +30,12 @@ export default class Options {
     let shromeFilePromise
     this._shrome.set({ mode, user, repo, localUrl: url })
 
-    const request = new Request(this._shrome)
+    const request = new Request({
+      mode: this._shrome.mode,
+      url : this._shrome.localUrl ,
+      user: this._shrome.user,
+      repo: this._shrome.repo
+    })
 
     if (mode === 'github') {
       if (!user || !repo) return this._display(
@@ -42,10 +47,10 @@ export default class Options {
       )
     }
 
-    request.getConfig()
-      .then(({ config, sha }) =>
+    request.themes()
+      .then(({ themes, url }) =>
         this._shrome
-          .set({ sha, theme: Shrome.default.theme, config }, true)
+          .set({ url, theme: '', themes }, true)
           .save()
           .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
       )
