@@ -1,25 +1,40 @@
 import Helpers from '../Helpers.js'
 
 export default class Shrome {
-  constructor(shrome) {
-    this.set(shrome)
+  constructor(shrome, sanitize = false) {
+    Object.entries(JSON.parse(JSON.stringify(Shrome.default)))
+      .forEach(([ key, value ]) => this[key] = value)
+
+    this.set(shrome, sanitize)
   }
 
-  set(o, fromUser = false) {
-    const isDefined = (o  ) => typeof o !== 'undefined'
-    const set       = (key) => this[key] = o[key]
+  set mode(mode)     { this.source.mode = mode        }
+  get mode()         { return this.source.mode        }
+  set localUrl(url)  { this.source.local.url = url    }
+  get localUrl()     { return this.source.local.url   }
+  set githubUrl(url) { this.source.github.url = url   }
+  get githubUrl()    { return this.source.github.url  }
+  set user(user)     { this.source.github.user = user }
+  get user()         { return this.source.github.user }
+  set repo(repo)     { this.source.github.repo = repo }
+  get repo()         { return this.source.github.repo }
+  set theme(theme)   { this.config.theme = theme      }
+  get theme()        { return this.config.theme       }
+  set themes(themes) { this.config.themes = themes    }
+  get themes()       { return this.config.themes      }
 
-    Object.keys(Shrome.default)
-      .map(key => isDefined(o[key]) && set(key))
+  set(o, sanitize = false) {
+    ['mode', 'localUrl', 'githubUrl', 'user', 'repo', 'theme', 'themes']
+      .forEach(key => typeof o[key] !== undefined && (this[key] = o[key]))
 
-    fromUser && o.config && this._sanitize()
+    sanitize && o.themes && this._sanitize()
 
     return this
   }
 
   _sanitize() {
     // FIXME view broken TODO redo view
-    Helpers.mapTree(this.config, (theme, data, i, d, { path, key }) => {
+    Helpers.mapTree(this.themes, (theme, data, i, d, { path, key }) => {
       if (theme.startsWith('__')) return
 
       const cleanFiles = (file) => file.type
@@ -73,7 +88,7 @@ export default class Shrome {
     let matches = {}
     if (!this.theme) return { matches, files }
 
-    const data = this.config[this.theme]
+    const data = this.themes[this.theme]
 
     Helpers.mapTree(data, (theme, data) => {
       if (theme.startsWith('__')) return true
@@ -118,13 +133,21 @@ export default class Shrome {
 
   static get default() {
     return {
-      local : true,
-      user  : 'truchi',
-      repo  : 'shrome-themes',
-      url   : 'http://localhost:8080/',
-      sha   : null,
-      theme : null,
-      config: {}
+      source: {
+        mode: '',
+        local: {
+          url: ''
+        },
+        github: {
+          url : '',
+          user: '',
+          repo: ''
+        }
+      },
+      config: {
+        theme : '',
+        themes: {}
+      }
     }
   }
 

@@ -32,12 +32,12 @@ export default class Source extends View {
   }
 
   _onForm(e) {
-    const local = this._$local.checked
+    const mode  = this._$local.checked ? 'local' : 'github'
     const user  = this._$user .value
     const repo  = this._$repo .value
     const url   = this._$url  .value
 
-    this._dispatch('change', { local, user, repo, url })
+    this._dispatch('change', { mode, user, repo, url })
 
     e.preventDefault()
     e.stopPropagation()
@@ -45,20 +45,20 @@ export default class Source extends View {
     return this
   }
 
-  render({ local, user, repo, url, error }) {
+  render({ mode, user, repo, url, error }) {
     this._detach()
       ._rememberFocus()
 
     this._$.innerHTML = `
       <label>
-          <input class="github" type="radio" name="local" value="0" ${ local ? '' : 'checked="true"' }>
+          <input class="github" type="radio" name="mode" value="0" ${ mode ? '' : 'checked="true"' }>
           <b>Github</b>
       </label>
       <input class="user" type="text" placeholder="user" value="${ user }">/
       <input class="repo" type="text" placeholder="repo" value="${ repo }">
       <br>
       <label>
-          <input class="local" type="radio" name="local" value="1" ${ local ? 'checked="true"' : '' }">
+          <input class="local" type="radio" name="mode" value="1" ${ mode ? 'checked="true"' : '' }">
           <b>Local</b>
       </label>
       <input class="url" type="text" placeholder="URL" value="${ url }">

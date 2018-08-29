@@ -26,13 +26,13 @@ export default class Options {
     return this
   }
 
-  _onSource({ detail: { local, user, repo, url } }) {
+  _onSource({ detail: { mode, user, repo, url } }) {
     let shromeFilePromise
-    this._shrome.set({ local, user, repo, url })
+    this._shrome.set({ mode, user, repo, localUrl: url })
 
     const request = new Request(this._shrome)
 
-    if (!local) {
+    if (mode === 'github') {
       if (!user || !repo) return this._display(
         !user && !repo
           ? 'Please fill user and repo fields'
