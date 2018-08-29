@@ -23,7 +23,7 @@ export default class Request {
     )
   }
 
-  getFile(file) {
-    return this._request.getFile(file)
+  file(url) {
+    return this._request.file(url)
   }
 }

@@ -54,11 +54,8 @@ export default class Shrome {
       const cleanFiles = (file) => file.type
       const  makeFiles = (url, key) => (file, index) => {
         let ret = {
-          name: '',
           priority: 0,
-          type: '',
-          url,
-          key
+          type: ''
         }
 
         if (typeof file === 'string') {
@@ -71,8 +68,8 @@ export default class Shrome {
         if      (ret.name.endsWith('.js' )) ret.type = 'js'
         else if (ret.name.endsWith('.css')) ret.type = 'css'
 
-        ret.url += ret.name
-        ret.key += '.' + index // NOTE theme MUST NOT be a number
+        ret.url = this.url + url + ret.name
+        ret.key = key + '.' + index // NOTE theme MUST NOT be a number
         delete ret.name
 
         return ret
@@ -82,7 +79,7 @@ export default class Shrome {
             path   += data.__path || ''
             key    += (d !== 0 ? '.' : '') + theme // NOTE theme MUST NOT contain the dot character
       const files   = Helpers.arrayify(data.__files)
-        .map(makeFiles(path, key))
+        .map(makeFiles(path.replace(/^\/+/, ''), key))
         .filter(cleanFiles)
 
       data.__key     = key
@@ -92,7 +89,7 @@ export default class Shrome {
       delete data.__path
 
       return { path, key }
-    }, { path: this.url || '', key: '' })
+    }, { path: '', key: '' })
 
     return this
   }

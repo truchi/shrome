@@ -4,21 +4,17 @@ export default class Local extends BaseRequest {
   constructor({ url }) {
     super()
 
-    this._url = url
+    this._url = url.replace(/\/*$/, '/')
   }
 
   themes() {
-    const file = BaseRequest.url(this._url, '.shrome.json')
     const url  = this._url
+    const file = url + '.shrome.json'
 
     return new Promise((resolve, reject) =>
-      this.get(file)
+      this.file(file)
         .then (themes => resolve({ themes, url }))
         .catch(error  => reject(`${ file }: ${ error }`))
     )
-  }
-
-  getFile(file) {
-    return this.get(BaseRequest.url(this._url, file))
   }
 }

@@ -1,5 +1,5 @@
 export default class BaseRequest {
-  get(url) {
+  file(url) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
 
@@ -16,12 +16,5 @@ export default class BaseRequest {
       xhr.open('GET', url, true)
       xhr.send()
     })
-  }
-
-  static url(url, file) {
-    url  = url .replace(/\/+$/, '')
-    file = file.replace(/^\/+/, '')
-
-    return `${ url }/${ file }`
   }
 }

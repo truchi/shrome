@@ -14,9 +14,9 @@ export default class Github extends BaseRequest {
     let   file
 
     return new Promise((resolve, reject) =>
-      this.getUrl(user, repo)
+      this._url(user, repo)
         .then(url =>
-          this.get(file = Github.fileUrl(user, repo, sha, '.shrome.json'))
+          this.file(file = url + '.shrome.json')
             .then (themes => resolve({ themes, url }))
             .catch(error  => reject(`${ file }: ${ error }`))
         )
@@ -24,27 +24,15 @@ export default class Github extends BaseRequest {
     )
   }
 
-  getFile(file) {
-    return this.get(Github.fileUrl(this._user, this._repo, file))
-  }
-
-  getUrl(user, repo) {
+  _url(user, repo) {
     return new Promise((resolve, reject) =>
-      this.get(Github.commitsUrl(user, repo))
+      this.file(`https://api.github.com/repos/${ user }/${ repo }/commits`)
         .then((commits) => (commits = JSON.parse(commits)) ||
           commits.length
-            ? resolve(`https://rawgit.com/${ user }/${ repo }/${ commits[0].sha }`)
+            ? resolve(`https://rawgit.com/${ user }/${ repo }/${ commits[0].sha }/`)
             : reject(`${ user }/${ repo } has no commits`)
         )
         .catch(() => reject(`Invalid user/repo: ${ this._user }/${ this._repo }`))
     )
-  }
-
-  static commitsUrl(user, repo) {
-    return `https://api.github.com/repos/${ user }/${ repo }/commits`
-  }
-
-  static fileUrl(user, repo, sha, file) {
-    return BaseRequest.url(`https://rawgit.com/${ user }/${ repo }/${ sha }`, file)
   }
 }
