@@ -28,13 +28,19 @@ export default class Options {
 
   _onSource({ detail: { mode, user, repo, url } }) {
     let shromeFilePromise
-    this._shrome.set({ mode, user, repo, localUrl: url })
+    const request = new Request({ mode, url, user, repo })
 
-    const request = new Request({
-      mode: this._shrome.mode,
-      url : this._shrome.localUrl ,
-      user: this._shrome.user,
-      repo: this._shrome.repo
+    this._shrome.set({
+      source: {
+        mode,
+        local: {
+          url
+        },
+        github: {
+          user,
+          repo
+        }
+      }
     })
 
     if (mode === 'github') {
@@ -50,7 +56,13 @@ export default class Options {
     request.themes()
       .then(({ themes, url }) =>
         this._shrome
-          .set({ url, theme: '', themes }, true)
+          .set({
+            config: {
+              theme: '',
+              themes
+            }
+          }, true)
+          .do(() => this._shrome.url = url)
           .save()
           .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
       )
@@ -63,7 +75,11 @@ export default class Options {
     chrome.runtime.sendMessage({ reload: true })
 
     this._shrome
-      .set({ theme })
+      .set({
+        config: {
+          theme
+        }
+      })
       .save()
 
     return this

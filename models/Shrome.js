@@ -1,27 +1,28 @@
 import Helpers from '../Helpers.js'
 
 export default class Shrome {
-  constructor(shrome, sanitize = false) {
-    Object.entries(JSON.parse(JSON.stringify(Shrome.default)))
-      .forEach(([ key, value ]) => this[key] = value)
-
-    this.set(shrome, sanitize)
+  constructor(shrome = {}, sanitize = false) {
+    this
+      .set({
+        source: {
+          mode: '',
+          local: {
+            url: ''
+          },
+          github: {
+            url : '',
+            user: '',
+            repo: ''
+          }
+        },
+        config: {
+          theme : '',
+          themes: {}
+        }
+      })
+      .set(shrome, sanitize)
   }
 
-  get mode()         { return this.source.mode        }
-  set mode(mode)     { this.source.mode = mode        }
-  get localUrl()     { return this.source.local.url   }
-  set localUrl(url)  { this.source.local.url = url    }
-  get githubUrl()    { return this.source.github.url  }
-  set githubUrl(url) { this.source.github.url = url   }
-  get user()         { return this.source.github.user }
-  set user(user)     { this.source.github.user = user }
-  get repo()         { return this.source.github.repo }
-  set repo(repo)     { this.source.github.repo = repo }
-  get theme()        { return this.config.theme       }
-  set theme(theme)   { this.config.theme = theme      }
-  get themes()       { return this.config.themes      }
-  set themes(themes) { this.config.themes = themes    }
   get url() {
     const mode = this.source.mode
 
@@ -29,19 +30,21 @@ export default class Shrome {
       ? this.source[mode].url
       : null
   }
+
   set url(url) {
     const mode = this.source.mode
 
     this.source.hasOwnProperty(mode) && (this.source[this.source.mode].url = url)
   }
 
-  set(o, sanitize = false) {
-    const keys = ['mode', 'localUrl', 'githubUrl', 'user', 'repo', 'theme', 'themes', 'url']
+  set(o) {
+    Helpers.merge(this, o)
 
-    Object.entries(o)
-      .forEach(([ key, value ]) => keys.includes(key) && (this[key] = value))
+    return this
+  }
 
-    sanitize && o.themes && this._sanitize()
+  do(cb) {
+    cb.bind(this)(this)
 
     return this
   }
@@ -127,7 +130,7 @@ export default class Shrome {
       chrome.storage.sync.set({ shrome }, () =>
         chrome.runtime.lastError
           ? reject (chrome.runtime.lastError)
-          : resolve()
+          : resolve.bind(this)(this)
       )
     )
   }
@@ -137,29 +140,9 @@ export default class Shrome {
       chrome.storage.sync.get('shrome', ({ shrome }) =>
         chrome.runtime.lastError
           ? reject (chrome.runtime.lastError)
-          : resolve(new Shrome(shrome ? JSON.parse(shrome) : Shrome.default))
+          : resolve(new Shrome(shrome ? JSON.parse(shrome) : {}))
       )
     )
-  }
-
-  static get default() {
-    return {
-      source: {
-        mode: '',
-        local: {
-          url: ''
-        },
-        github: {
-          url : '',
-          user: '',
-          repo: ''
-        }
-      },
-      config: {
-        theme : '',
-        themes: {}
-      }
-    }
   }
 
   static _getRegExp(string) {

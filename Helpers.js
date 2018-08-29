@@ -30,4 +30,26 @@ export default class Helpers {
   static arrayify(obj) {
     return obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
   }
+
+  static merge(target, ...sources) {
+    if (!sources.length) return target
+    const source = sources.shift()
+
+    if (Helpers._mergeIsObject(target) && Helpers._mergeIsObject(source)) {
+      for (const key in source) {
+        if (Helpers._mergeIsObject(source[key])) {
+          if (!target[key]) Object.assign(target, { [key]: {} })
+          Helpers.merge(target[key], source[key])
+        } else {
+          Object.assign(target, { [key]: source[key] })
+        }
+      }
+    }
+
+    return Helpers.merge(target, ...sources)
+  }
+
+  static _mergeIsObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+  }
 }
