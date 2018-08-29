@@ -26,4 +26,8 @@ export default class Helpers {
       return o
     }, {})
   }
+
+  static arrayify(obj) {
+    return obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
+  }
 }

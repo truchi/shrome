@@ -19,29 +19,51 @@ export default class Shrome {
 
   _sanitize() {
     // FIXME view broken TODO redo view
-    Helpers.mapTree(this.config, (theme, data, i, d, { base, key }) => {
+    Helpers.mapTree(this.config, (theme, data, i, d, { path, key }) => {
       if (theme.startsWith('__')) return
 
-      const makeArr  = obj => obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
-      const makeFile = (base, key, type) => (file, index) => ({ key, type, index, file: base + file })
+      const cleanFiles = (file) => file.type
+      const  makeFiles = (url, key) => (file, index) => {
+        let ret = {
+          name: '',
+          priority: 0,
+          type: '',
+          url,
+          key
+        }
 
-      const match = makeArr(data.__match)
-            base += data.__base || ''
-            key  += (d !== 0 ? '.' : '') + theme // NOTE theme shouldn't contain '.' ...
-      const js    = makeArr(data.__js ).map(makeFile(base, key, 'js' ))
-      const css   = makeArr(data.__css).map(makeFile(base, key, 'css'))
-      const files = js.concat(css) // TODO group by type for content script, redo content script as before
+        if (typeof file === 'string') {
+          ret.name = file
+        } else if (Helpers.isObject(file)) {
+          file.hasOwnProperty('name'    ) && (ret.name     = file.name    )
+          file.hasOwnProperty('priority') && (ret.priority = file.priority)
+        }
 
-      data.__key   = key
-      data.__match = match
-      data.__files = files
+        if      (ret.name.endsWith('.js' )) ret.type = 'js'
+        else if (ret.name.endsWith('.css')) ret.type = 'css'
 
-      delete data.__base
-      delete data.__js
-      delete data.__css
+        ret.url += ret.name
+        ret.key += '.' + index // NOTE theme MUST NOT be a number
+        delete ret.name
 
-      return { base, key }
-    }, { base: '', key: '' })
+        return ret
+      }
+
+      const matches = Helpers.arrayify(data.__matches)
+            path   += data.__path || ''
+            key    += (d !== 0 ? '.' : '') + theme // NOTE theme MUST NOT contain the dot character
+      const files   = Helpers.arrayify(data.__files)
+        .map(makeFiles(path, key))
+        .filter(cleanFiles)
+
+      data.__key     = key
+      data.__matches = matches
+      data.__files   = files
+
+      delete data.__path
+
+      return { path, key }
+    }, { path: '', key: '' })
 
     return this
   }
