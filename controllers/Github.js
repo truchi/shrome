@@ -1,7 +1,7 @@
 import BaseRequest from './BaseRequest.js'
 
 export default class Github extends BaseRequest {
-  constructor({ user, repo}) {
+  constructor({ user, repo }) {
     super()
 
     this._user = user

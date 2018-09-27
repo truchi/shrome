@@ -52,4 +52,8 @@ export default class Helpers {
   static _mergeIsObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
   }
+
+  static flat(arrays) {
+    return [].concat.apply([], arrays)
+  }
 }

@@ -61,7 +61,7 @@ export default class Source extends View {
           <input class="local" type="radio" name="mode" value="1" ${ mode ? 'checked="true"' : '' }">
           <b>Local</b>
       </label>
-      <input class="url" type="text" placeholder="URL" value="${ url }">
+      <input class="url" type="text" placeholder="URL" value="${ url || 'http://localhost:8080' }">
       <i class="icon ${ error ? 'ko' : 'ok' }"></i>
       <span class="message">${ error || '' }</span>
       <input type="submit" style="display:none" />

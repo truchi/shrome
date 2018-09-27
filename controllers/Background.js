@@ -1,10 +1,10 @@
-import Helpers from '../Helpers.js'
-import Shrome  from '../models/Shrome.js'
-import Request from './Request.js'
+import Helpers     from '../Helpers.js'
+import Shrome      from '../models/Shrome.js'
+import BaseRequest from './BaseRequest.js'
 
 export default class Background {
   constructor() {
-    this._shrome = Shrome.default
+    this._shrome = null
 
     this._attach      = this._attach     .bind(this)
     this._injectAll   = this._injectAll  .bind(this)
@@ -40,16 +40,17 @@ export default class Background {
   }
 
   _getFiles(url) {
-    const results = { js: [], css: [], fail: {} }
-    const request = new Request(this._shrome)
-    const { matches, files }   = this._shrome.files(url)
-    console.log(matches, files)
+    this._shrome.config.theme = 'shraculaLOCAL'
 
-    const promises = Object.entries(Helpers.groupBy(files, 'file')).map(([ file,  data ]) =>
-      request.getFile(file)
-        .then (content => data.forEach(d => d.content = content))
-        .catch(error   => data.forEach(d => d.error   = error  ))
-    )
+    const request = new BaseRequest()
+    const files   = this._shrome.files(url)
+
+    const promises = Object.entries(Helpers.groupBy(files, 'url'))
+      .map(([ url,  data ]) =>
+        request.file(url)
+          .then (content => data.forEach(d => d.content = content))
+          .catch(error   => data.forEach(d => d.error   = error  ))
+      )
 
     return new Promise(resolve => Promise.all(promises).finally(() => resolve(files)))
   }

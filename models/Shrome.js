@@ -106,6 +106,7 @@ export default class Shrome {
   files(url) {
     let files   = []
     let matches = {}
+    let ret = {}
     if (!this.config.theme) return { matches, files }
 
     const theme = this.config.themes[this.config.theme]
@@ -120,12 +121,19 @@ export default class Shrome {
 
       if (index === -1) return false
 
+      ret[data.__key + (index !== null ? '.' + index : '')] = data.__files
       matches[data.__key] = index
       files.push(data.__files)
     })
 
-    files = JSON.parse(JSON.stringify([].concat.apply([], files)))
+    files = JSON.parse(JSON.stringify(Helpers.flat(files)))
 
+    ret = Helpers.flat(
+      Object.entries(JSON.parse(JSON.stringify(ret)))
+        .map(([ match, files ]) => files.map(file => (file.match = match) && file))
+    )
+
+    return ret
     return { matches, files }
   }
 
