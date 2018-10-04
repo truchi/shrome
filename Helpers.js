@@ -27,8 +27,39 @@ export default class Helpers {
     }, {})
   }
 
+  static sortBy(object, key, fn = null) {
+    return Helpers.flat(
+      Object.entries(Helpers.groupBy(object, key))
+        .sort(fn ? (entry1, entry2) => fn(entry1[0], entry2[0]) : undefined)
+        .map (entry => entry[1])
+    )
+  }
+
+  static dedupBy(object, key) {
+    return object.filter((elem, i) => i === object.findIndex(e => elem[key] === e[key]))
+  }
+
   static arrayify(obj) {
     return obj ? (Array.isArray(obj) ? obj : [ obj ]) : []
+  }
+
+  static ajax(url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) resolve(xhr.responseText)
+          else                    reject (xhr.status === 0
+                                          ? 'Unknown error'
+                                          : xhr.status + ' ' + xhr.statusText
+                                         )
+        }
+      }
+
+      xhr.open('GET', url, true)
+      xhr.send()
+    })
   }
 
   static merge(target, ...sources) {
