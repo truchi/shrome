@@ -7,7 +7,7 @@ import Theme   from './models/Theme.js'
 
 const u = new User()
 console.log(u)
-console.log(User.parse(User.serialize(u)))
+console.log(User.parse(u.serialize()))
 
 const t = new Theme({
   "__files": ["/icimain.js", "/icidark.css", "/youtube/watch/dark.css"],
