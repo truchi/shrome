@@ -10,7 +10,7 @@ export default class ThemeRegExp {
       pattern   = regexp.slice(1, pos)
       flags     = regexp.slice(pos + 1, regexp.length)
     } else {
-      pattern = regexp.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+      pattern = Helpers.regexpify(regexp)
     }
 
     this.regexp = new RegExp(pattern, flags)

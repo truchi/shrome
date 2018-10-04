@@ -62,6 +62,10 @@ export default class Helpers {
     })
   }
 
+  static regexpify(string) {
+    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+  }
+
   static merge(target, ...sources) {
     if (!sources.length) return target
     const source = sources.shift()
