@@ -12,20 +12,15 @@ export default class Theme {
   }
 
   on(id) {
-    const theme    = this._refs[id]
-    const parentId = theme.parentId
-
-    theme.on = true
-    if (parentId) this.on(parentId)
+    const node = this._refs[id]
+    node && (node.on = true)
 
     return this
   }
 
   off(id) {
-    const theme = this._refs[id]
-
-    theme.on = false
-    theme.children.forEach(child => this.off(child.id))
+    const node = this._refs[id]
+    node && (node.on = false)
 
     return this
   }
