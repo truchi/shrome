@@ -9,13 +9,16 @@ export default class ThemeRegExp {
     return this.regexp.test(string)
   }
 
-  // TODO unused
-  // clone() {
-  //   let { id, parentId, regexp, on } = this
-  //   regexp = new RegExp(this.regexp.source, this.regexp.flags)
+  clone() {
+    return ThemeRegExp.from(this)
+  }
 
-  //   return new ThemeRegExp({ id, parentId, regexp, on })
-  // }
+  intermediate() {
+    const { id, parentId, on } = this
+    const { source, flags    } = this.regexp
+
+    return { id, parentId, regexp: { source, flags }, on }
+  }
 
   static sanitize(regexp) {
     let pattern = ''
@@ -34,5 +37,12 @@ export default class ThemeRegExp {
 
   static sort(regexps) {
     return regexps
+  }
+
+  static from(intermediate) {
+    let { id, parentId, regexp, on } = intermediate
+    regexp = new RegExp(regexp.source, regexp.flags)
+
+    return new ThemeRegExp({ id, parentId, regexp, on })
   }
 }

@@ -4,7 +4,7 @@ import ThemeFile   from './ThemeFile.js'
 import ThemeRegExp from './ThemeRegExp.js'
 
 export default class Theme {
-  constructor({ root }) {
+  constructor({ root = {} }) {
     Object.assign(this, { root })
 
     this._refs = {}
@@ -55,6 +55,16 @@ export default class Theme {
     return ret
   }
 
+  clone() {
+    return Theme.from(this, true)
+  }
+
+  intermediate() {
+    const root = this.root.intermediate()
+
+    return { root }
+  }
+
   _makeRefs(node) {
     this._refs[node.id] = node
 
@@ -81,5 +91,12 @@ export default class Theme {
     }(data)
 
     return { root }
+  }
+
+  static from(intermediate, clone = false) {
+    let { root } = intermediate
+    root = clone ? root.clone() : SubTheme.from(root)
+
+    return new Theme({ root })
   }
 }

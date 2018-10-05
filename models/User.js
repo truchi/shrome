@@ -1,3 +1,5 @@
+import Repo  from './Repo.js'
+
 export default class User {
   constructor({ favorites = [], locals = [], repo = null }) {
     Object.assign(this, { favorites, locals, repo, tabs: {} })
@@ -19,7 +21,10 @@ export default class User {
   }
 
   serialize() {
-    return JSON.stringify(this)
+    const { favorites, locals } = this
+    const repo = this.repo.intermediate()
+
+    return JSON.stringify({ favorites, locals, repo })
   }
 
   save() {
@@ -32,12 +37,14 @@ export default class User {
     )
   }
 
-  static parse(string) {
-    return new User(JSON.parse(string))
+  static parse(json) {
+    let { favorites, locals, repo } = JSON.parse(json)
+    repo = Repo.from(repo)
+
+    return new User({ favorites, locals, repo })
   }
 
   static load() {
-    // TODO user.repo.theme._refs??? user.tabs???
     return new Promise((resolve, reject) =>
       chrome.storage.sync.get('user', ({ user }) =>
         chrome.runtime.lastError

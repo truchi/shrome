@@ -6,7 +6,13 @@ export default class ThemeFile {
   }
 
   clone() {
-    return new ThemeFile(this)
+    return ThemeFile.from(this)
+  }
+
+  intermediate() {
+    const { id, parentId, name, priority, type, path, on } = this
+
+    return { id, parentId, name, priority, type, path, on }
   }
 
   static sanitize(file, path = '') {
@@ -41,5 +47,9 @@ export default class ThemeFile {
     const js  = Helpers.sortBy(files.js  || [], 'priority')
 
     return css.concat(js)
+  }
+
+  static from(intermediate) {
+    return new ThemeFile(intermediate)
   }
 }

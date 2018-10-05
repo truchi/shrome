@@ -38,6 +38,9 @@ Request.discover()
 
         theme.on([ 1, 6, 7, 18 ])
 
+        const user2 = User.parse(user.serialize())
+        window.user2 = user
+
         // const files = Request.files(repo, theme.on(1).url('https://www.youtube.com').files)
         //   .then(files => {
         //     console.log(files)
