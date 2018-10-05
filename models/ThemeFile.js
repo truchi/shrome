@@ -1,11 +1,26 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeFile {
-  constructor(file, path = '') {
+  constructor({ name, priority, type, path }) {
+    this.name     = name
+    this.priority = priority
+    this.type     = type
+    this.path     = path
+  }
+
+  clone() {
+    const name     = this.name
+    const priority = this.priority
+    const type     = this.type
+    const path     = this.path
+
+    return new ThemeFile({ name, priority, type, path })
+  }
+
+  static from(file, path = '') {
     let name     = ''
     let priority = 0
     let type     = ''
-    let url      = ''
 
     if (typeof file === 'string') {
       name = file
@@ -21,20 +36,17 @@ export default class ThemeFile {
     else if (name.endsWith('.css')) type = 'css'
     else    throw 'File has invalid extension'
 
-    url = path + name
+    path += name
 
-    this.name     = name
-    this.priority = priority
-    this.type     = type
-    this.url      = url
+    return new ThemeFile({ name, priority, type, path })
   }
 
   static make(files, path = '') {
-    return ThemeFile.sort(Helpers.arrayify(files).map(file => new ThemeFile(file, path)))
+    return ThemeFile.sort(Helpers.arrayify(files).map(file => ThemeFile.from(file, path)))
   }
 
   static sort(files) {
-    files = Helpers.dedupBy(files, 'url')
+    files = Helpers.dedupBy(files, 'path')
     files = Helpers.groupBy(files, 'type')
 
     const css = Helpers.sortBy(files.css || [], 'priority')

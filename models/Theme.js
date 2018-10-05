@@ -36,7 +36,7 @@ export default class Theme {
       const some  =  theme.regexps.some(regexp => regexp.test(url))
 
       if (on && (empty || some)) {
-        theme.files   .forEach(file  => ret.push(file) )
+        theme.files   .forEach(file  => ret.push(file.clone()))
         theme.children.forEach(child => get(child, ret))
       }
 
