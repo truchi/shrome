@@ -6,6 +6,9 @@ import ThemeRegExp from './ThemeRegExp.js'
 export default class Theme {
   constructor({ root }) {
     Object.assign(this, { root })
+
+    this._refs = {}
+    this._makeRefs(this.root)
   }
 
   on(id) {
@@ -39,9 +42,20 @@ export default class Theme {
       }
 
       return ret
-    }(this.theme, [])
+    }(this.root, [])
 
     return ThemeFile.sort(files)
+  }
+
+  _makeRefs(node) {
+    this._refs[node.id] = node
+
+    ;(node.children || [])
+      .concat(node.regexps || [])
+      .concat(node.files   || [])
+      .forEach(node => this._makeRefs(node))
+
+    return this
   }
 
   static sanitize(data) {
