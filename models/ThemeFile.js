@@ -1,7 +1,9 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeFile {
-  constructor({ name, priority, type, path }) {
+  constructor({ themeId, index, name, priority, type, path }) {
+    this.themeId  = themeId
+    this.index    = index
     this.name     = name
     this.priority = priority
     this.type     = type
@@ -9,15 +11,17 @@ export default class ThemeFile {
   }
 
   clone() {
+    const themeId  = this.themeId
+    const index    = this.index
     const name     = this.name
     const priority = this.priority
     const type     = this.type
     const path     = this.path
 
-    return new ThemeFile({ name, priority, type, path })
+    return new ThemeFile({ themeId, index, name, priority, type, path })
   }
 
-  static from(file, path = '') {
+  static from(themeId, index, file, path = '') {
     let name     = ''
     let priority = 0
     let type     = ''
@@ -38,11 +42,12 @@ export default class ThemeFile {
 
     path += name
 
-    return new ThemeFile({ name, priority, type, path })
+    return new ThemeFile({ themeId, index, name, priority, type, path })
   }
 
-  static make(files, path = '') {
-    return ThemeFile.sort(Helpers.arrayify(files).map(file => ThemeFile.from(file, path)))
+  static make(themeId, files, path = '') {
+    return ThemeFile.sort(Helpers.arrayify(files).map(file => ThemeFile.from(themeId, null, file, path)))
+      .map((file, index) => { file.index = index; return file })
   }
 
   static sort(files) {

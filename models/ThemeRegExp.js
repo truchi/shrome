@@ -1,7 +1,7 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeRegExp {
-  constructor(regexp) {
+  constructor(themeId, index, regexp) {
     let pattern = ''
     let flags   = ''
 
@@ -13,14 +13,16 @@ export default class ThemeRegExp {
       pattern = Helpers.regexpify(regexp)
     }
 
-    this.regexp = new RegExp(pattern, flags)
+    this.themeId = themeId
+    this.index   = index
+    this.regexp  = new RegExp(pattern, flags)
   }
 
   test(string) {
     return this.regexp.test(string)
   }
 
-  static make(regexps) {
-    return Helpers.arrayify(regexps).map(regexp => new ThemeRegExp(regexp))
+  static make(themeId, regexps) {
+    return Helpers.arrayify(regexps).map((regexp, index) => new ThemeRegExp(themeId, index, regexp))
   }
 }

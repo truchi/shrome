@@ -54,8 +54,8 @@ export default class Theme {
 
       const id       = inc
       const on       = false
-      const regexps  = ThemeRegExp.make(data.__matches)
-      const files    = ThemeFile  .make(data.__files, path)
+      const regexps  = ThemeRegExp.make(id, data.__matches)
+      const files    = ThemeFile  .make(id, data.__files, path)
       const children = Object.entries(data)
         .map(([ name, data ]) => !name.startsWith('__') ? sanitize(data, id, name, path) : null)
         .filter(o => o)
