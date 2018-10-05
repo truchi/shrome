@@ -1,56 +1,44 @@
 import Source  from './views/Source.js'
 import Config  from './views/Config.js'
 import Options from './controllers/Options.js'
-import Github  from './controllers/Github.js'
+import Request from './controllers/Request.js'
 import User    from './models/User.js'
+import Repo    from './models/Repo.js'
 import Theme   from './models/Theme.js'
 
-const u = new User()
-console.log(u)
-console.log(User.parse(u.serialize()))
+const user = new User()
+window.user = user
 
-const t = new Theme({
-  "__files": ["/icimain.js", "/icidark.css", "/youtube/watch/dark.css"],
-  "__matches": "https://www.youtube.com",
-  "shracula": {
-    "youtube": {
-      "__path": "/youtube",
-      "__files": ["/icimain.js", "/icidark.css"],
-      "index": {
-        "__matches": "/^https:\\/\\/www\\.youtube\\.com\\/?$/",
-        "__path": "/index",
-        "__files": ["/main.js", "/other.js", "/dark.css"]
-      },
-      "list": {
-        "__matches": "/^https:\\/\\/www\\.youtube\\.com\\/?$/",
-        "__path": "/list",
-        "__files": "/main.js"
-      },
-      "watch": {
-        "__matches": "/^https:\\/\\/www\\.youtube\\.com\\/?$/",
-        "__path": "/watch",
-        "__files": [{
-          "name": "/main.js",
-          "priority": 1
-        }, {
-          "name": "/darkTEST.css",
-          "priority": 10
-        }, {
-          "name": "/darkTEST.css",
-          "priority": 10
-        }, {
-          "name": "/dark.css",
-          "priority": 1
-        }]
-      }
-    }
-  }
+Request.discover()
+  .then(repos => {
+    const repo = repos[0]
+
+    Request.theme(repo)
+      .then(theme => {
+        user.repo  = repo
+        repo.theme = theme
+
+        console.log('user', user)
+
+        const files = Request.files(repo, theme.on(1).files('https://www.youtube.com'))
+                .then(files => {
+                  console.log(files)
+                })
+      })
+  })
+
+Request.repo({
+  url: 'http://localhost:8080/',
+  provider: 'local'
 })
-window.t = t
-// Github.discover()
-//   .then(repos => {
-//     console.log(repos)
-//   })
+  .then(repo => console.log('local', repo))
+
+Request.repo({
+  name: 'shrome-themes',
+  user: { name: 'truchi' },
+  provider: 'github'
+})
+  .then(repo => console.log('github', repo))
 
 const $source = document.getElementById('source')
 const $config = document.getElementById('config')

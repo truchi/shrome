@@ -7,7 +7,6 @@ export default class Theme {
     this._data = data
     this._refs = {}
     this.theme = this._sanitize(this._data)
-    console.log(this)
   }
 
   on(id) {
@@ -68,4 +67,6 @@ export default class Theme {
 
     return sanitize(data)
   }
+
+  // TODO save/load doesn't work bc of unserializable stuff, serialize only data
 }

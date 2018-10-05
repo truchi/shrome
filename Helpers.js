@@ -62,6 +62,12 @@ export default class Helpers {
     })
   }
 
+  static trim(string, trim = ' ') {
+    trim = Helpers.regexpify(trim)
+
+    return string.replace(new RegExp(`^${ trim }+|${ trim }+$`, 'g'), '')
+  }
+
   static regexpify(string) {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
   }

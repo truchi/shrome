@@ -1,29 +1,51 @@
-import Local  from './Local.js'
-import Github from './Github.js'
+import Helpers from '../Helpers.js'
+import Local   from './providers/Local.js'
+import Github  from './providers/Github.js'
+import Repo    from '../models/Repo.js'
+import Theme   from '../models/Theme.js'
 
 export default class Request {
-  constructor({ mode, url, user, repo }) {
-    this._request = mode === 'local'
-      ? new Local ({ url })
-      : new Github({ user, repo })
+  static discover() {
+    return Promise.all(
+      Object.entries(Request.providers)
+        .map(([name, provider]) =>
+          provider.discover()
+            .then(repos => repos.map(repo => (repo.provider = name) && new Repo(repo)))
+        )
+    ).then(repos => Helpers.flat(repos))
   }
 
-  themes() {
-    return new Promise((resolve, reject) =>
-      this._request.themes()
-        .then(({ themes, url }) => {
-          try {
-            themes = JSON.parse(themes)
-            resolve({ themes, url })
-          } catch (e) {
-            reject('Cannot parse themes', themes, e)
-          }
-        })
-        .catch(reject)
+  static repo(repo) {
+    const provider = Request.providers[repo.provider]
+
+    return provider.repo(repo)
+      .then(repo => new Repo(repo))
+  }
+
+  static theme(repo) {
+    const provider = Request.providers[repo.provider]
+
+    return provider.theme(repo)
+      .then(theme => new Theme(JSON.parse(theme)))
+  }
+
+  static files(repo, files = []) {
+    const provider = Request.providers[repo.provider]
+    files          = Helpers.arrayify(files)
+
+    return Promise.all(
+      files.map(file =>
+        Helpers.ajax(provider.fileUrl(repo, file))
+          .then (content => (file.content = content) && file)
+          .catch(error   => (file.error   = error  ) && file)
+      )
     )
   }
 
-  file(url) {
-    return this._request.file(url)
+  static get providers() {
+    return {
+      local : Local,
+      github: Github
+    }
   }
 }
