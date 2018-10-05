@@ -52,7 +52,7 @@ export default class Helpers {
           if (xhr.status === 200) resolve(xhr.responseText)
           else                    reject (xhr.status === 0
                                           ? 'Unknown error'
-                                          : xhr.status + ' ' + xhr.statusText
+                                          : xhr.status + (xhr.statusText ? ' ' + xhr.statusText : '')
                                          )
         }
       }
