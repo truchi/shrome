@@ -1,27 +1,15 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeFile {
-  constructor({ themeId, index, name, priority, type, path }) {
-    this.themeId  = themeId
-    this.index    = index
-    this.name     = name
-    this.priority = priority
-    this.type     = type
-    this.path     = path
+  constructor({ id, parentId, name, priority, type, path, on = false }) {
+    Object.assign(this, { id, parentId, name, priority, type, path, on })
   }
 
   clone() {
-    const themeId  = this.themeId
-    const index    = this.index
-    const name     = this.name
-    const priority = this.priority
-    const type     = this.type
-    const path     = this.path
-
-    return new ThemeFile({ themeId, index, name, priority, type, path })
+    return new ThemeFile(this)
   }
 
-  static from(themeId, index, file, path = '') {
+  static sanitize(file, path = '') {
     let name     = ''
     let priority = 0
     let type     = ''
@@ -42,12 +30,7 @@ export default class ThemeFile {
 
     path += name
 
-    return new ThemeFile({ themeId, index, name, priority, type, path })
-  }
-
-  static make(themeId, files, path = '') {
-    return ThemeFile.sort(Helpers.arrayify(files).map(file => ThemeFile.from(themeId, null, file, path)))
-      .map((file, index) => { file.index = index; return file })
+    return { name, priority, type, path }
   }
 
   static sort(files) {

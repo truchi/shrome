@@ -48,16 +48,32 @@ export default class Theme {
   _sanitize(data) {
     let inc = 0
 
-    const sanitize = (data, parentId = 0, name = '', path = '') => {
-      ++inc
-      path = path + (data.__path || '')
+    const instanciate = (parentId, arr, ctor, sanitizeArgs = []) =>
+      ctor.sort(
+        Helpers.arrayify(arr).map(elem => {
+          ++inc
 
-      const id       = inc
-      const on       = false
-      const regexps  = ThemeRegExp.make(id, data.__matches)
-      const files    = ThemeFile  .make(id, data.__files, path)
+          elem          = ctor.sanitize.apply(null, [elem].concat(sanitizeArgs))
+          elem.id       = inc
+          elem.parentId = parentId
+          elem          = new ctor(elem)
+
+          this._refs[elem.id] = elem
+          return elem
+        })
+      )
+
+    const sanitize = (data, parentId = 0, name = '', prepend = '') => {
+      ++inc
+      prepend = prepend + (data.__path || '')
+
+      const id      = inc
+      const on      = false
+      const regexps = instanciate(id, data.__matches, ThemeRegExp)
+      const files   = instanciate(id, data.__files  , ThemeFile, [ prepend ])
+
       const children = Object.entries(data)
-        .map(([ name, data ]) => !name.startsWith('__') ? sanitize(data, id, name, path) : null)
+        .map(([ name, data ]) => !name.startsWith('__') ? sanitize(data, id, name, prepend) : null)
         .filter(o => o)
 
       this._refs[id] = { id, parentId, name, regexps, files, children, on }
