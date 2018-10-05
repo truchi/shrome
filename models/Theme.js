@@ -26,14 +26,14 @@ export default class Theme {
   }
 
   files(url) {
-    let files = function get(theme, ret) {
-      const on    =  theme.on
-      const empty = !theme.regexps.length
-      const some  =  theme.regexps.some(regexp => regexp.test(url))
+    let files = function get(subtheme, ret) {
+      const on    =  subtheme.on
+      const empty = !subtheme.regexps.length
+      const some  =  subtheme.regexps.some(regexp => regexp.test(url))
 
       if (on && (empty || some)) {
-        theme.files   .forEach(file  => ret.push(file.clone()))
-        theme.children.forEach(child => get(child, ret))
+        subtheme.files   .forEach(file  => ret.push(file.clone()))
+        subtheme.children.forEach(child => get(child, ret))
       }
 
       return ret
