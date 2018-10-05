@@ -6,7 +6,7 @@ import User    from './models/User.js'
 import Repo    from './models/Repo.js'
 import Theme   from './models/Theme.js'
 
-const user = new User()
+const user = new User({})
 window.user = user
 
 Request.discover()
@@ -17,28 +17,46 @@ Request.discover()
       .then(theme => {
         user.repo  = repo
         repo.theme = theme
-
         console.log('user', user)
 
-        const files = Request.files(repo, theme.on(1).files('https://www.youtube.com'))
-                .then(files => {
-                  console.log(files)
-                })
+        chrome.windows.getAll(
+          { populate: true },
+          (windows) => windows.forEach(window => window.tabs.forEach(tab => user.tab(tab.id, tab.url)))
+        )
+
+        chrome.tabs.onUpdated.addListener((id, info, tab) => {
+          if (info.status && info.status === 'complete') {
+            const files = user.tab(id, tab.url)
+            console.log(id, tab.url, files, user.tabs[id])
+          }
+        })
+
+        chrome.tabs.onRemoved.addListener(id => {
+          user.tab(id)
+          console.log('removed', id, user.tabs)
+        })
+
+        theme.on([ 1, 6, 7, 18 ])
+
+        // const files = Request.files(repo, theme.on(1).url('https://www.youtube.com').files)
+        //   .then(files => {
+        //     console.log(files)
+        //   })
       })
   })
 
-Request.repo({
-  url: 'http://localhost:8080/',
-  provider: 'local'
-})
-  .then(repo => console.log('local', repo))
+// Request.repo({
+//   url: 'http://localhost:8080/',
+//   provider: 'local'
+// })
+//   .then(repo => console.log('local', repo))
 
-Request.repo({
-  name: 'shrome-themes',
-  user: { name: 'truchi' },
-  provider: 'github'
-})
-  .then(repo => console.log('github', repo))
+// Request.repo({
+//   name: 'shrome-themes',
+//   user: { name: 'truchi' },
+//   provider: 'github'
+// })
+//   .then(repo => console.log('github', repo))
 
 const $source = document.getElementById('source')
 const $config = document.getElementById('config')

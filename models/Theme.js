@@ -11,35 +11,48 @@ export default class Theme {
     this._makeRefs(this.root)
   }
 
-  on(id) {
-    const node = this._refs[id]
-    node && (node.on = true)
+  on(ids = []) {
+    const on = id => {
+      const node = this._refs[id]
+      node && (node.on = true)
+    }
+
+    Helpers.arrayify(ids).map(on)
 
     return this
   }
 
-  off(id) {
-    const node = this._refs[id]
-    node && (node.on = false)
+  off(ids = []) {
+    const off = id => {
+      const node = this._refs[id]
+      node && (node.on = false)
+    }
+
+    Helpers.arrayify(ids).map(off)
 
     return this
   }
 
-  files(url) {
-    let files = function get(subtheme, ret) {
-      const on    =  subtheme.on
-      const empty = !subtheme.regexps.length
-      const some  =  subtheme.regexps.some(regexp => regexp.test(url))
+  url(url) {
+    let ret = function get(subtheme, ret) {
+      const on      = subtheme.on
+      const regexps = subtheme.regexps
+      const empty   = !regexps.length
+      const index   = regexps.findIndex(regexp => regexp.test(url))
 
-      if (on && (empty || some)) {
-        subtheme.files   .forEach(file  => ret.push(file.clone()))
+      if (on && (empty || index !== -1)) {
+        ret.subthemesIds.push(subtheme.id)
+        ;(index !== -1) && ret.regexpsIds.push(regexps[index].id)
+        subtheme.files   .forEach(file  => ret.files.push(file.clone()))
         subtheme.children.forEach(child => get(child, ret))
       }
 
       return ret
-    }(this.root, [])
+    }(this.root, { subthemesIds: [], regexpsIds: [], files: [] })
 
-    return ThemeFile.sort(files)
+    ret.files = ThemeFile.sort(ret.files)
+
+    return ret
   }
 
   _makeRefs(node) {

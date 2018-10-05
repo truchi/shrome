@@ -9,6 +9,14 @@ export default class ThemeRegExp {
     return this.regexp.test(string)
   }
 
+  // TODO unused
+  // clone() {
+  //   let { id, parentId, regexp, on } = this
+  //   regexp = new RegExp(this.regexp.source, this.regexp.flags)
+
+  //   return new ThemeRegExp({ id, parentId, regexp, on })
+  // }
+
   static sanitize(regexp) {
     let pattern = ''
     let flags   = ''

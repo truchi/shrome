@@ -1,14 +1,21 @@
 export default class User {
-  constructor(data = {}) {
-    const defaults = {
-      favorites: [],
-      locals   : [],
-      repo     : null
+  constructor({ favorites = [], locals = [], repo = null }) {
+    Object.assign(this, { favorites, locals, repo, tabs: {} })
+  }
+
+  tab(id, url = '') {
+    if (!url) {
+      delete this.tabs[id]
+      return []
     }
 
-    this.favorites = data.favorites || defaults.favorites
-    this.locals    = data.locals    || defaults.locals
-    this.repo      = data.current   || defaults.repo
+    const { subthemesIds, regexpsIds, files } = this.repo.theme.url(url)
+    if (!subthemesIds.length) return []
+
+    const filesIds = files.map(file => file.id)
+    this.tabs[id]  = { subthemesIds, regexpsIds, filesIds }
+
+    return files
   }
 
   serialize() {
@@ -30,6 +37,7 @@ export default class User {
   }
 
   static load() {
+    // TODO user.repo.theme._refs??? user.tabs???
     return new Promise((resolve, reject) =>
       chrome.storage.sync.get('user', ({ user }) =>
         chrome.runtime.lastError
