@@ -15,7 +15,7 @@ export default class User {
     if (!subthemesIds.length) return []
 
     const filesIds = files.map(file => file.id)
-    this.tabs[id]  = { subthemesIds, regexpsIds, filesIds }
+    this.tabs[id]  = { url, subthemesIds, regexpsIds, filesIds }
 
     return files
   }

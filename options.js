@@ -27,7 +27,7 @@ Request.discover()
         chrome.tabs.onUpdated.addListener((id, info, tab) => {
           if (info.status && info.status === 'complete') {
             const files = user.tab(id, tab.url)
-            console.log(id, tab.url, files, user.tabs[id])
+            console.log(id, user.tabs[id])
           }
         })
 
