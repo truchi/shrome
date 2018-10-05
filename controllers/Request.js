@@ -26,7 +26,7 @@ export default class Request {
     const provider = Request.providers[repo.provider]
 
     return provider.theme(repo)
-      .then(theme => new Theme(JSON.parse(theme)))
+      .then(theme => new Theme(Theme.sanitize(JSON.parse(theme))))
   }
 
   static files(repo, files = []) {

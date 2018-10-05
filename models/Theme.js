@@ -1,12 +1,11 @@
 import Helpers     from '../Helpers.js'
+import SubTheme    from './SubTheme.js'
 import ThemeFile   from './ThemeFile.js'
 import ThemeRegExp from './ThemeRegExp.js'
 
 export default class Theme {
-  constructor(data = {}) {
-    this._data = data
-    this._refs = {}
-    this.theme = this._sanitize(this._data)
+  constructor({ root }) {
+    Object.assign(this, { root })
   }
 
   on(id) {
@@ -45,44 +44,20 @@ export default class Theme {
     return ThemeFile.sort(files)
   }
 
-  _sanitize(data) {
+  static sanitize(data) {
     let inc = 0
+    const getId = () => ++inc
 
-    const instanciate = (parentId, arr, ctor, sanitizeArgs = []) =>
-      ctor.sort(
-        Helpers.arrayify(arr).map(elem => {
-          ++inc
+    const root = function sanitize(data, parentId = 0, name = '', prepend = '') {
+      prepend += data.__path || ''
 
-          elem          = ctor.sanitize.apply(null, [elem].concat(sanitizeArgs))
-          elem.id       = inc
-          elem.parentId = parentId
-          elem          = new ctor(elem)
+      const id = getId()
+      const { regexps, files, childrenData } = SubTheme.sanitize(getId, data, id, prepend)
+      const children = childrenData.map(([ name, data ]) => sanitize(data, id, name, prepend))
 
-          this._refs[elem.id] = elem
-          return elem
-        })
-      )
+      return new SubTheme({ id, parentId, name, regexps, files, children })
+    }(data)
 
-    const sanitize = (data, parentId = 0, name = '', prepend = '') => {
-      ++inc
-      prepend = prepend + (data.__path || '')
-
-      const id      = inc
-      const on      = false
-      const regexps = instanciate(id, data.__matches, ThemeRegExp)
-      const files   = instanciate(id, data.__files  , ThemeFile, [ prepend ])
-
-      const children = Object.entries(data)
-        .map(([ name, data ]) => !name.startsWith('__') ? sanitize(data, id, name, prepend) : null)
-        .filter(o => o)
-
-      this._refs[id] = { id, parentId, name, regexps, files, children, on }
-
-      return this._refs[id]
-    }
-
-    return sanitize(data)
+    return { root }
   }
-
-  // TODO save/load doesn't work bc of unserializable stuff, serialize only data
 }
