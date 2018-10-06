@@ -3,18 +3,35 @@
     --red: red;
 }
 
-#tree-view .regexps,
-#tree-view .files
+#tree-view .children,
+#tree-view .content
 {
     margin-left: 25px;
 }
 
-#tree-view .children
+#tree-view .folding:before
 {
-    margin-left: 50px;
+    display: inline-block;
+    cursor: pointer;
+    width : 5px;
 }
 
-#tree-view .toggle,
+#tree-view .folding[state="expanded"]:before
+{
+    content: '-';
+}
+
+#tree-view .folding[state="collapsed"]:before
+{
+    content: '+';
+}
+
+#tree-view .content {
+    overflow  : hidden;
+    transition: max-height .1s ease;
+}
+
+#tree-view .activation,
 #tree-view .name
 {
     display: inline;
@@ -32,24 +49,24 @@
 }
 
 
-#tree-view i
+#tree-view .icon
 {
     display: inline-block;
     width  : 10px;
     height : 10px;
 }
 
-#tree-view .regexp i
+#tree-view .regexp .icon
 {
     background: black;
 }
 
-#tree-view .file[type="css"] i
+#tree-view .file[type="css"] .icon
 {
     background: blue;
 }
 
-#tree-view .file[type="js"] i
+#tree-view .file[type="js"] .icon
 {
     background: yellow;
 }

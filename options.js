@@ -33,14 +33,13 @@ Request.discover()
         chrome.tabs.onUpdated.addListener((id, info, tab) => {
           if (info.status && info.status === 'complete') {
             const files = user.tab(id, tab.url)
-            console.log(id, user.tabs[id])
             treeView.render(user.viewData())
           }
         })
 
         chrome.tabs.onRemoved.addListener(id => {
-          user.tab(id)
           console.log('removed', id, user.tabs)
+          treeView.render(user.viewData())
         })
 
         theme.on([ 1, 6, 7, 18 ])
