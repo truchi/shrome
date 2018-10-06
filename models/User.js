@@ -20,6 +20,25 @@ export default class User {
     return files
   }
 
+  viewData() {
+    const data = this.repo.theme.clone()
+
+    const markNode = (tabId, url) => nodeId => {
+      const node = data.refs[nodeId]
+      node.tabs || (node.tabs = {})
+
+      node.tabs[tabId] = { url }
+    }
+
+    Object.entries(this.tabs)
+      .forEach(([ tabId, { url, subthemesIds, regexpsIds, filesIds } ]) =>
+        subthemesIds.concat(regexpsIds).concat(filesIds)
+          .forEach(markNode(tabId, url))
+      )
+
+    return data.root
+  }
+
   serialize() {
     const { favorites, locals } = this
     const repo = this.repo.intermediate()

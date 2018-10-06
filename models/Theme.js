@@ -7,13 +7,13 @@ export default class Theme {
   constructor({ root = {} }) {
     Object.assign(this, { root })
 
-    this._refs = {}
+    this.refs = {}
     this._makeRefs(this.root)
   }
 
   on(ids = []) {
     const on = id => {
-      const node = this._refs[id]
+      const node = this.refs[id]
       node && (node.on = true)
     }
 
@@ -24,7 +24,7 @@ export default class Theme {
 
   off(ids = []) {
     const off = id => {
-      const node = this._refs[id]
+      const node = this.refs[id]
       node && (node.on = false)
     }
 
@@ -66,7 +66,7 @@ export default class Theme {
   }
 
   _makeRefs(node) {
-    this._refs[node.id] = node
+    this.refs[node.id] = node
 
     ;(node.children || [])
       .concat(node.regexps || [])
