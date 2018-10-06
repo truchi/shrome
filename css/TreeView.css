@@ -1,0 +1,55 @@
+#tree-view
+{
+    --red: red;
+}
+
+#tree-view .regexps,
+#tree-view .files
+{
+    margin-left: 25px;
+}
+
+#tree-view .children
+{
+    margin-left: 50px;
+}
+
+#tree-view .toggle,
+#tree-view .name
+{
+    display: inline;
+}
+
+#tree-view .subtheme > .name
+{
+    font-size  : larger;
+    font-weight: bolder;
+}
+
+#tree-view [off] .name
+{
+    color: grey;
+}
+
+
+#tree-view i
+{
+    display: inline-block;
+    width  : 10px;
+    height : 10px;
+}
+
+#tree-view .regexp i
+{
+    background: black;
+}
+
+#tree-view .file[type="css"] i
+{
+    background: blue;
+}
+
+#tree-view .file[type="js"] i
+{
+    background: yellow;
+}

@@ -5,6 +5,7 @@ import Request from './controllers/Request.js'
 import User    from './models/User.js'
 import Repo    from './models/Repo.js'
 import Theme   from './models/Theme.js'
+import TreeView from './views/TreeView.js'
 
 const user = new User({})
 window.user = user
@@ -19,15 +20,21 @@ Request.discover()
         repo.theme = theme
         console.log('user', user)
 
+        const treeView = new TreeView(document.getElementById('tree-view'))
+
         chrome.windows.getAll(
           { populate: true },
-          (windows) => windows.forEach(window => window.tabs.forEach(tab => user.tab(tab.id, tab.url)))
+          (windows) => windows.forEach(window => {
+            window.tabs.forEach(tab => user.tab(tab.id, tab.url))
+            treeView.render(user.viewData())
+          })
         )
 
         chrome.tabs.onUpdated.addListener((id, info, tab) => {
           if (info.status && info.status === 'complete') {
             const files = user.tab(id, tab.url)
             console.log(id, user.tabs[id])
+            treeView.render(user.viewData())
           }
         })
 
@@ -61,9 +68,9 @@ Request.discover()
 // })
 //   .then(repo => console.log('github', repo))
 
-const $source = document.getElementById('source')
-const $config = document.getElementById('config')
+// const $source = document.getElementById('source')
+// const $config = document.getElementById('config')
 
-const source  = new Source($source)
-const config  = new Config($config)
-const options = new Options({ source, config })
+// const source  = new Source($source)
+// const config  = new Config($config)
+// const options = new Options({ source, config })
