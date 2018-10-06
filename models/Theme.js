@@ -17,7 +17,7 @@ export default class Theme {
       node && (node.on = true)
     }
 
-    Helpers.arrayify(ids).map(on)
+    Helpers.arrayify(ids).forEach(on)
 
     return this
   }
@@ -28,7 +28,7 @@ export default class Theme {
       node && (node.on = false)
     }
 
-    Helpers.arrayify(ids).map(off)
+    Helpers.arrayify(ids).forEach(off)
 
     return this
   }
