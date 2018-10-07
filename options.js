@@ -26,7 +26,7 @@ const discover = () => {
           chrome.windows.getAll(
             { populate: true },
             (windows) => {
-              windows.forEach(window => window.tabs.forEach(tab => user.tab(tab.id, tab.url)))
+              windows.forEach(window => window.tabs.forEach(tab => user.url(tab.id, tab.url)))
               treeView.render(user.viewData())
                 .on('activation', (e) => {
                   console.log(e.detail)
@@ -36,13 +36,14 @@ const discover = () => {
 
           chrome.tabs.onUpdated.addListener((id, info, tab) => {
             if (info.status && info.status === 'complete') {
-              const files = user.tab(id, tab.url)
+              const files = user.url(id, tab.url)
               treeView.render(user.viewData())
             }
           })
 
           chrome.tabs.onRemoved.addListener(id => {
             console.log('removed', id, user.tabs)
+            user.url(id)
             treeView.render(user.viewData())
           })
 
@@ -51,12 +52,10 @@ const discover = () => {
           // const user2 = User.parse(user.serialize())
           // window.user2 = user
 
-          const testFiles = () => Request.files(theme.url('https://www.youtube.com').files)
+          user.url(9999999999, 'https://www.youtube.com', Request.files)
             .then(files => {
               console.log(files)
             })
-
-          testFiles()
         })
     })
 }

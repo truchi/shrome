@@ -2,10 +2,18 @@ import Repo  from './Repo.js'
 
 export default class User {
   constructor({ favorites = [], locals = [], repo = null }) {
-    Object.assign(this, { favorites, locals, repo, tabs: {} })
+    Object.assign(this, { favorites, locals, repo, tabs: {}, _errors: {} })
   }
 
-  tab(id, url = '') {
+  url(tabId, url = '', get = () => Promise.resolve()) {
+    return new Promise((resolve, reject) =>
+      get(this._tab(tabId, url))
+        .then(files => this._err(files) && resolve(files))
+        .catch(reject)
+    )
+  }
+
+  _tab(id, url = '') {
     if (!url) {
       delete this.tabs[id]
       return []
@@ -18,6 +26,12 @@ export default class User {
     this.tabs[id] = { url, subthemeIds, regexpIds, fileIds }
 
     return files
+  }
+
+  _err(files = []) {
+    files.forEach(file => file.error && (this._errors[file.id] = file.error))
+
+    return this
   }
 
   viewData() {
