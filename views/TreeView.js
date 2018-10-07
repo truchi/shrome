@@ -4,8 +4,9 @@ export default class TreeView extends View {
   constructor(_$) {
     super(_$)
 
-    this._$$        = {}
-    this._onFolding = this._onFolding.bind(this)
+    this._$$           = {}
+    this._onFolding    = this._onFolding.bind(this)
+    this._onActivation = this._onActivation.bind(this)
   }
 
   _onFolding(e) {
@@ -41,10 +42,21 @@ export default class TreeView extends View {
     return this
   }
 
+  _onActivation(e) {
+    const $activation = e.target
+    const id          = $activation.getAttribute('for')
+    const on          = $activation.checked
+
+    this._dispatch('activation', { id, on })
+
+    return this
+  }
+
   _preRender() {
     Object.values(this._$$)
       .forEach($$ => {
-        $$.$folding.removeEventListener('click', this._onFolding)
+        $$.$folding   .removeEventListener('click', this._onFolding   )
+        $$.$activation.removeEventListener('click', this._onActivation)
       })
 
     return this
@@ -68,7 +80,8 @@ export default class TreeView extends View {
         const $activation = $subtheme.querySelector('.activation')
         const $content    = $subtheme.querySelector('.content')
 
-        $folding.addEventListener('click', this._onFolding)
+        $folding   .addEventListener('click', this._onFolding   )
+        $activation.addEventListener('click', this._onActivation)
 
         const height = $content.clientHeight
         $content.setAttribute('height', height)

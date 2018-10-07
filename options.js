@@ -24,10 +24,13 @@ Request.discover()
 
         chrome.windows.getAll(
           { populate: true },
-          (windows) => windows.forEach(window => {
-            window.tabs.forEach(tab => user.tab(tab.id, tab.url))
+          (windows) => {
+            windows.forEach(window => window.tabs.forEach(tab => user.tab(tab.id, tab.url)))
             treeView.render(user.viewData())
-          })
+              .on('activation', (e) => {
+                console.log(e.detail)
+              })
+          }
         )
 
         chrome.tabs.onUpdated.addListener((id, info, tab) => {
