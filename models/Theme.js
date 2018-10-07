@@ -41,14 +41,14 @@ export default class Theme {
       const index   = regexps.findIndex(regexp => regexp.test(url))
 
       if (on && (empty || index !== -1)) {
-        ret.subthemesIds.push(subtheme.id)
-        ;(index !== -1) && ret.regexpsIds.push(regexps[index].id)
+        ret.subthemeIds.push(subtheme.id)
+        ;(index !== -1) && ret.regexpIds.push(regexps[index].id)
         subtheme.files   .forEach(file  => ret.files.push(file.clone()))
         subtheme.children.forEach(child => get(child, ret))
       }
 
       return ret
-    }(this.root, { subthemesIds: [], regexpsIds: [], files: [] })
+    }(this.root, { subthemeIds: [], regexpIds: [], files: [] })
 
     ret.files = ThemeFile.sort(ret.files)
 

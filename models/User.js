@@ -11,11 +11,11 @@ export default class User {
       return []
     }
 
-    const { subthemesIds, regexpsIds, files } = this.repo.theme.url(url)
-    if (!subthemesIds.length) return []
+    const { subthemeIds, regexpIds, files } = this.repo.theme.url(url)
+    if (!subthemeIds.length) return []
 
-    const filesIds = files.map(file => file.id)
-    this.tabs[id]  = { url, subthemesIds, regexpsIds, filesIds }
+    const fileIds = files.map(file => file.id)
+    this.tabs[id] = { url, subthemeIds, regexpIds, fileIds }
 
     return files
   }
@@ -31,8 +31,8 @@ export default class User {
     }
 
     Object.entries(this.tabs)
-      .forEach(([ tabId, { url, subthemesIds, regexpsIds, filesIds } ]) =>
-        subthemesIds.concat(regexpsIds).concat(filesIds)
+      .forEach(([ tabId, { url, subthemeIds, regexpIds, fileIds } ]) =>
+        subthemeIds.concat(regexpIds).concat(fileIds)
           .forEach(markNode(tabId, url))
       )
 
