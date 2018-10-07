@@ -13,14 +13,11 @@ export default class Local {
     ))
   }
 
-  static theme(repo) {
-    return Helpers.ajax(Local.fileUrl(repo, { path: '.shrome.json' }))
-  }
-
-  static fileUrl(repo, file) {
+  static fileUrl(repo, file = '') {
     const base = Helpers.trim(repo.url , '/')
-    const path = Helpers.trim(file.path, '/')
+    if (!file) return base
 
+    const path = Helpers.trim(file.path, '/')
     return base + '/' + path
   }
 }

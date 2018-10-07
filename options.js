@@ -48,44 +48,43 @@ const discover = () => {
 
           theme.on([ 1, 6, 7, 18 ])
 
-          const user2 = User.parse(user.serialize())
-          window.user2 = user
+          // const user2 = User.parse(user.serialize())
+          // window.user2 = user
 
-          // const files = Request.files(repo, theme.on(1).url('https://www.youtube.com').files)
-          //   .then(files => {
-          //     console.log(files)
-          //   })
+          const testFiles = () => Request.files(theme.url('https://www.youtube.com').files)
+            .then(files => {
+              console.log(files)
+            })
+
+          testFiles()
         })
     })
 }
 
 const testRequest = () => {
-  Request.repo({
+  const test = (data) => {
+    Request.repo(data)
+      .then(repo => {
+        Request.theme(repo)
+          .then(theme => {
+            console.log(data.provider, repo, theme)
+          })
+      })
+  }
+
+  test({
     url: 'http://localhost:8080/',
     provider: 'local'
   })
-    .then(repo => {
-      Request.theme(repo)
-        .then(theme => {
-          console.log('local', repo, theme)
-        })
-    })
-
-  Request.repo({
+  test({
     name: 'shrome-themes',
     user: { name: 'truchi' },
     provider: 'github'
   })
-    .then(repo => {
-      Request.theme(repo)
-        .then(theme => {
-          console.log('github', repo, theme)
-        })
-    })
 }
 
 discover()
-testRequest()
+// testRequest()
 
 // const $source = document.getElementById('source')
 // const $config = document.getElementById('config')

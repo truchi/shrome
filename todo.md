@@ -10,4 +10,5 @@ Shrome { mode: 'local|github|gitlab|...', local: { ... }, provider: { ... } }
 content add meta tag with: current repo, current theme
 content add tag with: url, priority
 
-repo head url if master not default?
+repo head url if master not default? empty repo?
+storage as object? no more JSON stringify

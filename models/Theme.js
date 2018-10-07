@@ -76,19 +76,19 @@ export default class Theme {
     return this
   }
 
-  static sanitize(data) {
-    let inc = 0
+  static sanitize(data, url) {
+    let   inc   = 0
     const getId = () => ++inc
 
-    const root = function sanitize(data, parentId = 0, name = '', prepend = '') {
+    const root = function sanitize(data, prepend, parentId = 0, name = '') {
       prepend += data.__path || ''
 
       const id = getId()
-      const { regexps, files, childrenData } = SubTheme.sanitize(getId, data, id, prepend)
-      const children = childrenData.map(([ name, data ]) => sanitize(data, id, name, prepend))
+      const { regexps, files, childrenData } = SubTheme.sanitize(data, prepend, id, getId)
+      const children = childrenData.map(([ name, data ]) => sanitize(data, prepend, id, name))
 
       return new SubTheme({ id, parentId, name, regexps, files, children })
-    }(data)
+    }(data, url)
 
     return { root }
   }

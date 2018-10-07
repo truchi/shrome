@@ -20,7 +20,7 @@ export default class SubTheme {
     return { id, parentId, name, regexps, files, children, on }
   }
 
-  static sanitize(getId, data, id, prepend) {
+  static sanitize(data, prepend, id, getId) {
     const instanciate = (arr, ctor) =>
       ctor.sort(
         Helpers.arrayify(arr).map(elem => {

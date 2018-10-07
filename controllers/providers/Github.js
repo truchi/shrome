@@ -56,18 +56,15 @@ export default class Github {
     })
   }
 
-  static theme(repo) {
-    // TODO empty repo? default branch !== master?
-    return Helpers.ajax(Github.fileUrl(repo, { path: '.shrome.json' }))
-  }
-
-  static fileUrl(repo, file) {
+  static fileUrl(repo, file = '') {
     const user = repo.user.name
     const name = repo.name
     const sha  = repo.head.sha
-    const path = Helpers.trim(file.path, '/')
+    const base = `https://rawgit.com/${ user }/${ name }/${ sha }`
+    if (!file) return base
 
-    return `https://rawgit.com/${ user }/${ name }/${ sha }/${ path }`
+    const path = Helpers.trim(file.path, '/')
+    return `${ base }/${ path }`
   }
 
   static get apiUrl() {

@@ -24,18 +24,19 @@ export default class Request {
 
   static theme(repo) {
     const provider = Request.providers[repo.provider]
+    const url      = provider.fileUrl(repo)
+    const file     = `${ url }/.shrome.json`
 
-    return provider.theme(repo)
-      .then(theme => new Theme(Theme.sanitize(JSON.parse(theme))))
+    return Helpers.ajax(file)
+      .then(json => new Theme(Theme.sanitize(JSON.parse(json), url)))
   }
 
-  static files(repo, files = []) {
-    const provider = Request.providers[repo.provider]
-    files          = Helpers.arrayify(files)
+  static files(files = []) {
+    files = Helpers.arrayify(files)
 
     return Promise.all(
       files.map(file =>
-        Helpers.ajax(provider.fileUrl(repo, file))
+        Helpers.ajax(file.url)
           .then (content => (file.content = content) && file)
           .catch(error   => (file.error   = error  ) && file)
       )
