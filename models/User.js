@@ -37,17 +37,15 @@ export default class User {
   viewData() {
     const data = this.repo.theme.clone()
 
-    const markNode = (tabId, url) => nodeId => {
-      const node = data.refs[nodeId]
-      node.tabs || (node.tabs = {})
-
-      node.tabs[tabId] = { url }
-    }
-
     Object.entries(this._tabs)
       .forEach(([ tabId, { url, subthemeIds, regexpIds, fileIds } ]) =>
         subthemeIds.concat(regexpIds).concat(fileIds)
-          .forEach(markNode(tabId, url))
+          .forEach(nodeId => {
+            const node = data.refs[nodeId]
+            node.tabs || (node.tabs = {})
+
+            node.tabs[tabId] = { url }
+          })
       )
 
     Object.entries(this._errors)
