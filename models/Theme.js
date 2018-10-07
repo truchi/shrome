@@ -11,26 +11,14 @@ export default class Theme {
     this._makeRefs(this.root)
   }
 
-  on(ids = []) {
-    const on = id => {
-      const node = this.refs[id]
-      node && (node.on = true)
-    }
+  set(id, on) {
+    const set = id => this.refs[id].on = on
 
-    Helpers.arrayify(ids).forEach(on)
+    this._childIds(id)
+      .concat(on ? this._parentIds(id) : [])
+      .forEach(id => set(id))
 
-    return this
-  }
-
-  off(ids = []) {
-    const off = id => {
-      const node = this.refs[id]
-      node && (node.on = false)
-    }
-
-    Helpers.arrayify(ids).forEach(off)
-
-    return this
+    return set(id)
   }
 
   url(url) {
@@ -74,6 +62,33 @@ export default class Theme {
       .forEach(node => this._makeRefs(node))
 
     return this
+  }
+
+  _parentIds(id) {
+    const refs = this.refs
+
+    return function get(id, ids = []) {
+      const parentId = refs[id].parentId
+
+      if (parentId) ids.push(parentId) && get(parentId, ids)
+
+      return ids
+    }(id)
+  }
+
+  _childIds(id) {
+    const refs = this.refs
+
+    return function get(id, ids = []) {
+      const node = refs[id]
+
+      ;(node.children || [])
+        .concat(node.regexps || [])
+        .concat(node.files   || [])
+        .forEach(node => ids.push(node.id) && get(node.id, ids))
+
+      return ids
+    }(id)
   }
 
   static sanitize(data, url) {

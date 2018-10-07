@@ -1,5 +1,4 @@
 import User     from '../models/User.js'
-import Request  from './Request.js'
 import Messager from './Messager.js'
 
 export default class Options extends Messager {
@@ -16,7 +15,6 @@ export default class Options extends Messager {
   _init({ user }) {
     this._user = User.from(user)
     this._display()
-    this._dev() // TODO remove
 
     return this
   }
@@ -37,21 +35,5 @@ export default class Options extends Messager {
     this._treeView.render(this._user.viewData())
 
     return this
-  }
-
-  _dev() {
-    Request.repo({
-      name: 'shrome-themes',
-      user: { name: 'truchi' },
-      provider: 'github'
-    })
-      .then(repo => {
-        Request.theme(repo)
-          .then(theme => {
-            repo.theme = theme
-            this._user.repo = repo
-            this._display()
-          })
-      })
   }
 }

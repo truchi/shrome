@@ -1,7 +1,7 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeRegExp {
-  constructor({ id, parentId, regexp, on = true }) {
+  constructor({ id, parentId, regexp, on = false }) {
     Object.assign(this, { id, parentId, regexp, on })
   }
 

@@ -55,8 +55,8 @@ export default class TreeView extends View {
   _preRender() {
     Object.values(this._$$)
       .forEach($$ => {
-        $$.$folding   .removeEventListener('click', this._onFolding   )
-        $$.$activation.removeEventListener('click', this._onActivation)
+        $$.$folding.removeEventListener('click', this._onFolding)
+        $$.$activations.forEach($ => $.removeEventListener('click', this._onActivation))
       })
 
     return this
@@ -75,19 +75,19 @@ export default class TreeView extends View {
 
     Array.from(this._$.querySelectorAll('.subtheme'))
       .forEach($subtheme => {
-        const id          = $subtheme.getAttribute('subtheme-id')
-        const $folding    = $subtheme.querySelector('.folding')
-        const $activation = $subtheme.querySelector('.activation')
-        const $content    = $subtheme.querySelector('.content')
+        const id           = $subtheme.getAttribute('subtheme-id')
+        const $folding     = $subtheme.querySelector('.folding')
+        const $activations = Array.from($subtheme.querySelectorAll('.activation'))
+        const $content     = $subtheme.querySelector('.content')
 
-        $folding   .addEventListener('click', this._onFolding   )
-        $activation.addEventListener('click', this._onActivation)
+        $folding.addEventListener('click', this._onFolding)
+        $activations.forEach($ => $.addEventListener('click', this._onActivation))
 
         const height = $content.clientHeight
         $content.setAttribute('height', height)
         $content.style.maxHeight = `${ height }px`
 
-        this._$$[id] = { $subtheme, $folding, $activation, $content }
+        this._$$[id] = { $subtheme, $folding, $activations, $content }
       })
 
     return this
@@ -116,7 +116,7 @@ export default class TreeView extends View {
 
   _renderFile(file) {
     return `
-      <div class="file" file-id="${ file.id }" type="${ file.type }">
+      <div class="file" file-id="${ file.id }" type="${ file.type }" ${ file.on ? 'on' : 'off' }>
         ${ this._renderCheckbox(file) }
         <i class="icon"></i>
         <div class="name">${ file.name }</div>
@@ -126,7 +126,7 @@ export default class TreeView extends View {
 
   _renderRegexp(regexp) {
     return `
-      <div class="regexp" regexp-id="${ regexp.id }">
+      <div class="regexp" regexp-id="${ regexp.id }" ${ regexp.on ? 'on' : 'off' }>
         ${ this._renderCheckbox(regexp) }
         <i class="icon"></i>
         <div class="name">/${ regexp.regexp.source }/${ regexp.regexp.flags }</div>

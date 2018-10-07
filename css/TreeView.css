@@ -43,7 +43,7 @@
     font-weight: bolder;
 }
 
-#tree-view [off] .name
+#tree-view [off] > .name
 {
     color: grey;
 }

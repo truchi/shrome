@@ -1,7 +1,7 @@
 import Helpers from '../Helpers.js'
 
 export default class ThemeFile {
-  constructor({ id, parentId, name, priority, type, url, on = true }) {
+  constructor({ id, parentId, name, priority, type, url, on = false }) {
     Object.assign(this, { id, parentId, name, priority, type, url, on })
   }
 
