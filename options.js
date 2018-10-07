@@ -42,15 +42,14 @@ const discover = () => {
           })
 
           chrome.tabs.onRemoved.addListener(id => {
-            console.log('removed', id, user.tabs)
             user.url(id)
             treeView.render(user.viewData())
           })
 
           theme.on([ 1, 6, 7, 18 ])
 
-          const user2 = User.from(user.intermediate())
-          window.user2 = user
+          // const user2 = User.from(user.intermediate())
+          // window.user2 = user
 
           // user.url(9999999999, 'https://www.youtube.com', Request.files)
           //   .then(files => {
@@ -82,8 +81,16 @@ const testRequest = () => {
   })
 }
 
-discover()
+// discover()
 // testRequest()
+
+const testOption = () => {
+  const $treeView = document.getElementById('tree-view')
+  const treeView  = new TreeView($treeView)
+  const options   = new Options({ treeView })
+}
+
+testOption()
 
 // const $source = document.getElementById('source')
 // const $config = document.getElementById('config')

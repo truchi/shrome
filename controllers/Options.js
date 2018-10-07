@@ -1,93 +1,37 @@
-import Shrome  from '../models/Shrome.js'
-import Request from './Request.js'
+import User from '../models/User.js'
 
 export default class Options {
-  constructor({ source, config }) {
-    this._source = source
-    this._config = config
-    this._shrome = null
+  constructor({ treeView }) {
+    Object.assign(this, { _user: null, _treeView: treeView })
+    this._init = this._init.bind(this)
 
-    this._onSource = this._onSource.bind(this)
-    this._onTheme  = this._onTheme .bind(this)
-
-    this._init()
+    chrome.runtime.sendMessage('sendUser', this._init)
   }
 
-  _init() {
-    return Shrome.get()
-      .then(shrome => (this._shrome = shrome) && this._attach()._display())
-      .catch(console.error)
+  _init({ user }) {
+    this._user = User.from(user)
+    this._attach()
+    this._display()
+
+    console.log(this._user)
+
+    return this
   }
 
   _attach() {
-    this._source.on('change', this._onSource)
-    this._config.on('theme' , this._onTheme )
+    this._treeView.on('activation', this._onActivation)
 
     return this
   }
 
-  _onSource({ detail: { mode, user, repo, url } }) {
-    let shromeFilePromise
-    const request = new Request({ mode, url, user, repo })
-
-    this._shrome.set({
-      source: {
-        mode,
-        local: {
-          url
-        },
-        github: {
-          user,
-          repo
-        }
-      }
-    })
-
-    if (mode === 'github') {
-      if (!user || !repo) return this._display(
-        !user && !repo
-          ? 'Please fill user and repo fields'
-          : !user
-            ? 'Please fill user field'
-            : 'Please fill repo field'
-      )
-    }
-
-    request.themes()
-      .then(({ themes, url }) =>
-        this._shrome
-          .set({
-            url,
-            config: {
-              theme: '',
-              themes
-            }
-          }, true)
-          .save()
-          .then(() => chrome.runtime.sendMessage({ reload: true }) || this._display())
-      )
-      .catch((error) => this._display(error))
+  _onActivation({ id, on }) {
+    console.log({ id, on })
 
     return this
   }
 
-  _onTheme({ detail: { theme } }) {
-    chrome.runtime.sendMessage({ reload: true })
-
-    this._shrome
-      .set({
-        config: {
-          theme
-        }
-      })
-      .save()
-
-    return this
-  }
-
-  _display(error = '') {
-    this._source.render({ ...this._shrome, error })
-    this._config.render(this._shrome)
+  _display() {
+    this._treeView.render(this._user.viewData())
 
     return this
   }

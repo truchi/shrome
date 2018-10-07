@@ -35,6 +35,8 @@ export default class User {
   }
 
   viewData() {
+    if (!this.repo) return
+
     const data = this.repo.theme.clone()
 
     Object.entries(this._tabs)
@@ -56,7 +58,7 @@ export default class User {
 
   intermediate() {
     const { favorites, locals } = this
-    const repo = this.repo.intermediate()
+    const repo = this.repo ? this.repo.intermediate() : null
 
     return { favorites, locals, repo }
   }
@@ -72,10 +74,17 @@ export default class User {
   }
 
   static from(intermediate) {
-    let { favorites, locals, repo } = intermediate
-    repo = Repo.from(repo)
+    let user, favorites, locals, repo
 
-    return new User({ favorites, locals, repo })
+    try {
+      ({ favorites, locals, repo } = intermediate)
+      repo = Repo.from(repo)
+      user = new User({ favorites, locals, repo })
+    } catch (e) {
+      user = new User({})
+    }
+
+    return user
   }
 
   static load() {

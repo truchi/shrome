@@ -64,7 +64,7 @@ export default class TreeView extends View {
 
   render(data) {
     this._preRender()
-    this._$.innerHTML = this._renderSubtheme(data, true)
+    this._$.innerHTML = data ? this._renderSubtheme(data, true) : ''
     this._postRender()
 
     return this
