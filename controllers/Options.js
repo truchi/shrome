@@ -8,7 +8,7 @@ export default class Options extends Messager {
     Object.assign(this, { _user: null, _treeView: treeView })
     this._onActivation = this._onActivation.bind(this)
 
-    this.send('background', 'sendUser', null, this._init)
+    this.send('background', 'send-user', null, this._init)
     this._attach()
   }
 
@@ -17,7 +17,7 @@ export default class Options extends Messager {
     this._display()
 
     window.user = this._user // TODO remove
-    console.log(this._user, user)
+    console.log(this._user)
 
     return this
   }

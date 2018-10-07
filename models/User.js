@@ -51,7 +51,7 @@ export default class User {
       )
 
     Object.entries(this._errors)
-      .forEach(([ id, error ]) => console.log(data.refs[id]) || (data.refs[id].error = error))
+      .forEach(([ id, error ]) => data.refs[id].error = error)
 
     return data.root
   }

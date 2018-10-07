@@ -18,7 +18,7 @@ export default class Background extends Messager {
   _attach() {
     const on = this.on('background')
 
-    on('sendUser'  , this._onSendUser  )
+    on('send-user' , this._onSendUser  )
     on('activation', this._onActivation)
 
     this._dev() // TODO remove
