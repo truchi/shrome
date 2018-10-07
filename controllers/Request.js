@@ -7,10 +7,10 @@ import Theme   from '../models/Theme.js'
 export default class Request {
   static discover() {
     return Promise.all(
-      Object.entries(Request.providers)
-        .map(([name, provider]) =>
+      Object.values(Request.providers)
+        .map(provider =>
           provider.discover()
-            .then(repos => repos.map(repo => (repo.provider = name) && new Repo(repo)))
+            .then(repos => repos.map(repo => new Repo(repo)))
         )
     ).then(repos => Helpers.flat(repos))
   }

@@ -9,7 +9,7 @@ export default class Local {
     if (!repo.url) throw 'Repo has no URL'
 
     return new Promise(resolve => resolve(
-      Object.assign({}, repo, { head: { url: repo.url } })
+      Object.assign({}, repo, { provider: 'local', head: { url: repo.url } })
     ))
   }
 

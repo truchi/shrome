@@ -35,9 +35,10 @@ export default class Github {
           commit = JSON.parse(commit)
 
           resolve({
-            name: repo.name,
-            desc: repo.description || '',
-            url : repo.html_url,
+            name    : repo.name,
+            desc    : repo.description || '',
+            url     : repo.html_url,
+            provider: 'github',
             head: {
               branch: repo.default_branch,
               sha   : commit.sha,
