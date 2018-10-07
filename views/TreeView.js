@@ -119,7 +119,7 @@ export default class TreeView extends View {
       <div class="file" file-id="${ file.id }" type="${ file.type }" ${ file.on ? 'on' : 'off' }>
         ${ this._renderCheckbox(file) }
         <i class="icon"></i>
-        <div class="name">${ file.name }</div>
+        <a class="name" href="${ file.url }" target="_blank" title="${ file.error || '' }">${ file.name }</a>
       </div>
     `
   }

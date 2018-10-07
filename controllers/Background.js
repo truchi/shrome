@@ -49,7 +49,10 @@ export default class Background extends Messager {
           .then(theme => {
             repo.theme = theme
             this._user.repo = repo
+            this._user.repo.theme.set(1, true)
+            this._user.url(99999, 'https://www.youtube.com', Request.files) // TODO dev remove
             window.user = this._user
+            console.log(this._user)
           })
       })
   }

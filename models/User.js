@@ -1,8 +1,8 @@
 import Repo  from './Repo.js'
 
 export default class User {
-  constructor({ favorites = [], locals = [], repo = null }) {
-    Object.assign(this, { favorites, locals, repo, _tabs: {}, _errors: {} })
+  constructor({ favorites = [], locals = [], repo = null, _tabs = {}, _errors = {} }) {
+    Object.assign(this, { favorites, locals, repo, _tabs, _errors })
   }
 
   url(tabId, url = '', get = () => Promise.resolve()) {
@@ -57,10 +57,10 @@ export default class User {
   }
 
   intermediate() {
-    const { favorites, locals } = this
+    const { favorites, locals, _tabs, _errors } = this
     const repo = this.repo ? this.repo.intermediate() : null
 
-    return { favorites, locals, repo }
+    return { favorites, locals, repo, _tabs, _errors }
   }
 
   save() {
@@ -74,12 +74,12 @@ export default class User {
   }
 
   static from(intermediate) {
-    let user, favorites, locals, repo
+    let user
 
     try {
-      ({ favorites, locals, repo } = intermediate)
+      let { favorites, locals, repo, _tabs, _errors } = intermediate
       repo = Repo.from(repo)
-      user = new User({ favorites, locals, repo })
+      user = new User({ favorites, locals, repo, _tabs, _errors })
     } catch (e) {
       user = new User({})
     }

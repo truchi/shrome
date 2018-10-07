@@ -91,33 +91,6 @@ export default class Theme {
     return this
   }
 
-  _parentIds(id) {
-    const refs = this.refs
-
-    return function get(id, ids = []) {
-      const parentId = refs[id].parentId
-
-      if (parentId) ids.push(parentId) && get(parentId, ids)
-
-      return ids
-    }(id)
-  }
-
-  _childIds(id) {
-    const refs = this.refs
-
-    return function get(id, ids = []) {
-      const node = refs[id]
-
-      ;(node.children || [])
-        .concat(node.regexps || [])
-        .concat(node.files   || [])
-        .forEach(node => ids.push(node.id) && get(node.id, ids))
-
-      return ids
-    }(id)
-  }
-
   static sanitize(data, url) {
     let   inc   = 0
     const getId = () => ++inc

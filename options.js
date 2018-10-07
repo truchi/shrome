@@ -7,9 +7,6 @@ import Repo    from './models/Repo.js'
 import Theme   from './models/Theme.js'
 import TreeView from './views/TreeView.js'
 
-const user = new User({})
-window.user = user
-
 const discover = () => {
   Request.discover()
     .then(repos => {

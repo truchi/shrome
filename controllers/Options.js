@@ -16,6 +16,9 @@ export default class Options extends Messager {
     this._user = User.from(user)
     this._display()
 
+    window.user = this._user // TODO remove
+    console.log(this._user, user)
+
     return this
   }
 
