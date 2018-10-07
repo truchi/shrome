@@ -49,13 +49,13 @@ const discover = () => {
 
           theme.on([ 1, 6, 7, 18 ])
 
-          // const user2 = User.parse(user.serialize())
-          // window.user2 = user
+          const user2 = User.from(user.intermediate())
+          window.user2 = user
 
-          user.url(9999999999, 'https://www.youtube.com', Request.files)
-            .then(files => {
-              console.log(files)
-            })
+          // user.url(9999999999, 'https://www.youtube.com', Request.files)
+          //   .then(files => {
+          //     console.log(files)
+          //   })
         })
     })
 }

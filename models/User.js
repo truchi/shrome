@@ -54,16 +54,16 @@ export default class User {
     return data.root
   }
 
-  serialize() {
+  intermediate() {
     const { favorites, locals } = this
     const repo = this.repo.intermediate()
 
-    return JSON.stringify({ favorites, locals, repo })
+    return { favorites, locals, repo }
   }
 
   save() {
     return new Promise((resolve, reject) =>
-      chrome.storage.sync.set({ user: this.serialize() }, () =>
+      chrome.storage.sync.set({ user: this.intermediate() }, () =>
         chrome.runtime.lastError
           ? reject(chrome.runtime.lastError)
           : resolve.bind(user)(user)
@@ -71,8 +71,8 @@ export default class User {
     )
   }
 
-  static parse(json) {
-    let { favorites, locals, repo } = JSON.parse(json)
+  static from(intermediate) {
+    let { favorites, locals, repo } = intermediate
     repo = Repo.from(repo)
 
     return new User({ favorites, locals, repo })
@@ -83,7 +83,7 @@ export default class User {
       chrome.storage.sync.get('user', ({ user }) =>
         chrome.runtime.lastError
           ? reject (chrome.runtime.lastError)
-          : resolve(User.parse(user))
+          : resolve(User.from(user))
       )
     )
   }
