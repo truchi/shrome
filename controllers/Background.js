@@ -1,11 +1,13 @@
-import Helpers from '../Helpers.js'
-import User    from '../models/User.js'
+import Helpers  from '../Helpers.js'
+import User     from '../models/User.js'
+import Messager from './Messager.js'
 
-export default class Background {
+export default class Background extends Messager {
   constructor() {
-    this._user      = null
-    this._attach    = this._attach   .bind(this)
-    this._onMessage = this._onMessage.bind(this)
+    super()
+
+    this._user   = null
+    this._attach = this._attach.bind(this)
 
     User.load()
       .then(user => this._user = user)
@@ -13,11 +15,22 @@ export default class Background {
   }
 
   _attach() {
-    chrome.runtime.onMessage.addListener(this._onMessage)
+    const on = this.on('background')
+
+    on('sendUser'  , this._onSendUser  )
+    on('activation', this._onActivation)
+
+    return this
   }
 
-  _onMessage(message, sender, respond) {
-    if (message === 'sendUser') respond({ user: this._user.intermediate() })
+  _onSendUser(data, respond) {
+    respond({ user: this._user.intermediate() })
+
+    return this
+  }
+
+  _onActivation({ id, on }, respond) {
+    respond({ user: this._user.intermediate() })
 
     return this
   }
