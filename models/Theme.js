@@ -26,12 +26,12 @@ export default class Theme {
       const on      = subtheme.on
       const regexps = subtheme.regexps
       const empty   = !regexps.length
-      const index   = regexps.findIndex(regexp => regexp.test(url))
+      const index   = regexps.findIndex(regexp => regexp.on && regexp.test(url))
 
       if (on && (empty || index !== -1)) {
         ret.subthemeIds.push(subtheme.id)
         ;(index !== -1) && ret.regexpIds.push(regexps[index].id)
-        subtheme.files   .forEach(file  => ret.files.push(file.clone()))
+        subtheme.files   .forEach(file  => file.on && ret.files.push(file.clone()))
         subtheme.children.forEach(child => get(child, ret))
       }
 
