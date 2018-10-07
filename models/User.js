@@ -2,7 +2,7 @@ import Repo  from './Repo.js'
 
 export default class User {
   constructor({ favorites = [], locals = [], repo = null }) {
-    Object.assign(this, { favorites, locals, repo, tabs: {}, _errors: {} })
+    Object.assign(this, { favorites, locals, repo, _tabs: {}, _errors: {} })
   }
 
   url(tabId, url = '', get = () => Promise.resolve()) {
@@ -15,7 +15,7 @@ export default class User {
 
   _tab(id, url = '') {
     if (!url) {
-      delete this.tabs[id]
+      delete this._tabs[id]
       return []
     }
 
@@ -23,7 +23,7 @@ export default class User {
     if (!subthemeIds.length) return []
 
     const fileIds = files.map(file => file.id)
-    this.tabs[id] = { url, subthemeIds, regexpIds, fileIds }
+    this._tabs[id] = { url, subthemeIds, regexpIds, fileIds }
 
     return files
   }
@@ -44,7 +44,7 @@ export default class User {
       node.tabs[tabId] = { url }
     }
 
-    Object.entries(this.tabs)
+    Object.entries(this._tabs)
       .forEach(([ tabId, { url, subthemeIds, regexpIds, fileIds } ]) =>
         subthemeIds.concat(regexpIds).concat(fileIds)
           .forEach(markNode(tabId, url))
