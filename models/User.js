@@ -50,6 +50,9 @@ export default class User {
           .forEach(markNode(tabId, url))
       )
 
+    Object.entries(this._errors)
+      .forEach(([ id, error ]) => console.log(data.refs[id]) || (data.refs[id].error = error))
+
     return data.root
   }
 
