@@ -1,11 +1,13 @@
-import Source  from './views/Source.js'
-import Config  from './views/Config.js'
-import Options from './controllers/Options.js'
-import Request from './controllers/Request.js'
-import User    from './models/User.js'
-import Repo    from './models/Repo.js'
-import Theme   from './models/Theme.js'
-import TreeView from './views/TreeView.js'
+import Source           from './views/Source.js'
+import Config           from './views/Config.js'
+import User             from './models/User.js'
+import Repo             from './models/Repo.js'
+import Theme            from './models/Theme.js'
+import TreeView         from './views/TreeView.js'
+import SearchView       from './views/SearchView.js'
+import Request          from './controllers/Request.js'
+import TreeController   from './controllers/TreeController.js'
+import SearchController from './controllers/SearchController.js'
 
 const discover = () => {
   Request.discover()
@@ -82,9 +84,12 @@ const testRequest = () => {
 // testRequest()
 
 const testOption = () => {
-  const $treeView = document.getElementById('tree-view')
-  const treeView  = new TreeView($treeView)
-  const options   = new Options({ treeView })
+  const $treeView        = document.getElementById('tree-view'  )
+  const $searchView      = document.getElementById('search-view')
+  const treeView         = new TreeView  ($treeView  )
+  const searchView       = new SearchView($searchView)
+  const treeController   = new TreeController  (treeView  )
+  const searchController = new SearchController(searchView)
 }
 
 testOption()

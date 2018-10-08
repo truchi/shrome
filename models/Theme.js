@@ -4,11 +4,11 @@ import ThemeFile   from './ThemeFile.js'
 import ThemeRegExp from './ThemeRegExp.js'
 
 export default class Theme {
-  constructor({ root = {} }) {
+  constructor({ root = null }) {
     Object.assign(this, { root })
 
     this.refs = {}
-    this._makeRefs(this.root)
+    this.root && this._makeRefs(this.root)
   }
 
   set(id, on) {
@@ -75,7 +75,7 @@ export default class Theme {
   }
 
   intermediate() {
-    const root = this.root.intermediate()
+    const root = this.root ? this.root.intermediate() : null
 
     return { root }
   }
@@ -109,9 +109,16 @@ export default class Theme {
   }
 
   static from(intermediate, clone = false) {
-    let { root } = intermediate
-    root = clone ? root.clone() : SubTheme.from(root)
+    let theme
 
-    return new Theme({ root })
+    try {
+      let { root } = intermediate
+      root  = clone ? root.clone() : SubTheme.from(root)
+      theme = new Theme({ root })
+    } catch (e) {
+      theme = new Theme({})
+    }
+
+    return theme
   }
 }

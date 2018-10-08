@@ -1,7 +1,7 @@
 import Helpers  from '../Helpers.js'
 import User     from '../models/User.js'
 import Messager from './Messager.js'
-import Request  from './Request.js'
+import Request  from './Request.js' // TODO remove
 
 export default class Background extends Messager {
   constructor() {
@@ -19,6 +19,7 @@ export default class Background extends Messager {
     const on = this.on('background')
 
     on('send-user' , this._onSendUser  )
+    on('send-repos', this._onSendRepos )
     on('activation', this._onActivation)
 
     this._dev() // TODO remove
@@ -31,6 +32,13 @@ export default class Background extends Messager {
     return this
   }
 
+  _onSendRepos(data, respond) {
+    this._user.discover()
+      .then(repos => respond({ repos: repos.map(repo => repo.intermediate()) }))
+
+    return true // Keeps message channel open for async
+  }
+
   _onActivation({ id, on }, respond) {
     this._user.repo.theme.set(id, on)
     respond({ user: this._user.intermediate() })
@@ -38,7 +46,7 @@ export default class Background extends Messager {
     return this
   }
 
-  _dev() {
+  _dev() { // TODO dev remove
     Request.repo({
       name: 'shrome-themes',
       user: { name: 'truchi' },
@@ -50,7 +58,7 @@ export default class Background extends Messager {
             repo.theme = theme
             this._user.repo = repo
             this._user.repo.theme.set(1, true)
-            this._user.url(99999, 'https://www.youtube.com', Request.files) // TODO dev remove
+            this._user.get(99999, 'https://www.youtube.com')
             window.user = this._user
             console.log(this._user)
           })

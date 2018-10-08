@@ -1,13 +1,14 @@
-import Repo  from './Repo.js'
+import Repo     from './Repo.js'
+import Request  from '../controllers/Request.js'
 
 export default class User {
   constructor({ favorites = [], locals = [], repo = null, _tabs = {}, _errors = {} }) {
     Object.assign(this, { favorites, locals, repo, _tabs, _errors })
   }
 
-  url(tabId, url = '', get = () => Promise.resolve()) {
+  get(tabId, url = '') {
     return new Promise((resolve, reject) =>
-      get(this._tab(tabId, url))
+      Request.files(this._tab(tabId, url))
         .then(files => this._err(files) && resolve(files))
         .catch(reject)
     )
@@ -34,7 +35,11 @@ export default class User {
     return this
   }
 
-  viewData() {
+  discover() {
+    return Request.discover()
+  }
+
+  treeData() {
     if (!this.repo) return
 
     const data = this.repo.theme.clone()

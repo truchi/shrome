@@ -7,7 +7,7 @@ export default class Repo {
       desc    : '',
       url     : '',
       provider: '',
-      theme   : new Theme({}),
+      theme   : null,
       head: {
         branch: '',
         sha   : '',
@@ -32,15 +32,22 @@ export default class Repo {
 
   intermediate() {
     const { name, desc, url, provider, head, user } = this
-    const theme = this.theme.intermediate()
+    const theme = this.theme ? this.theme.intermediate() : null
 
     return { name, desc, url, provider, theme, head, user }
   }
 
   static from(intermediate) {
-    let { name, desc, url, provider, theme, head, user } = intermediate
-    theme = Theme.from(theme)
+    let repo
 
-    return new Repo({ name, desc, url, provider, theme, head, user })
+    try {
+      let { name, desc, url, provider, theme, head, user } = intermediate
+      theme = Theme.from(theme)
+      repo  = new Repo({ name, desc, url, provider, theme, head, user })
+    } catch(e) {
+      repo = new Repo({})
+    }
+
+    return repo
   }
 }
