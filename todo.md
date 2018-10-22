@@ -11,4 +11,3 @@ content add meta tag with: current repo, current theme
 content add tag with: url, priority
 
 repo head url if master not default? empty repo?
-storage as object? no more JSON stringify

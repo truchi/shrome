@@ -84,8 +84,8 @@ const testRequest = () => {
 // testRequest()
 
 const testOption = () => {
-  const $treeView        = document.getElementById('tree-view'  )
-  const $searchView      = document.getElementById('search-view')
+  const $treeView        = document.getElementById('tree'  )
+  const $searchView      = document.getElementById('search')
   const treeView         = new TreeView  ($treeView  )
   const searchView       = new SearchView($searchView)
   const treeController   = new TreeController  (treeView  )
